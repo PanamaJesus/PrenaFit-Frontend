@@ -4,19 +4,19 @@ import { fadeIn, textVariant } from "../utils/motion";
 const PurposeSection = () => {
   const features = [
     {
-      icon: "🟣", // Replace with your actual icon component or image
-      title: "Built for impact",
-      description: "We identify and nurture a truly diverse team of designers, developers and marketers"
+      icon: "💪",
+      title: "Diseñado para tu progreso",
+      description: "Creamos rutinas y planes personalizados para que avances de forma constante y segura."
     },
     {
-      icon: "🔴", // Replace with your actual icon component or image
-      title: "In sync with you",
-      description: "We work the way you do by adapting to your workflows and rhythm we aim to blend in for a seamless."
+      icon: "🔥",
+      title: "Siempre en sintonía contigo",
+      description: "PrenFit se adapta a tu ritmo, tus objetivos y tus necesidades, ofreciéndote una experiencia totalmente personalizada."
     }
   ];
 
   return (
-    <section id="about" className="w-full bg-gray-50 py-16 px-4 md:px-8">
+    <section id="about" className="w-full bg-[#FFECCC] py-16 px-4 md:px-8">
       <div className="max-w-6xl mx-auto">
         <motion.div 
           variants={fadeIn('right', 0.2)}
@@ -27,15 +27,16 @@ const PurposeSection = () => {
           <motion.div variants={fadeIn('right', 0.3)}>
             <motion.div 
               variants={fadeIn('up', 0.4)}
-              className="text-sm text-purple-600 font-medium mb-2"
+              className="text-sm font-medium mb-2 text-[#BA487F]"
             >
-              ACHIEVE MORE
+              LOGRA MÁS
             </motion.div>
+
             <motion.h2 
               variants={textVariant(0.5)}
-              className="text-3xl md:w-4/5 md:text-4xl font-bold text-gray-900"
+              className="text-3xl md:w-4/5 md:text-4xl font-bold text-[#722323]"
             >
-              Purpose of a convoy is to keep your team
+              El propósito de PrenFit es ayudarte a alcanzar tu mejor versión
             </motion.h2>
           </motion.div>
 
@@ -51,20 +52,22 @@ const PurposeSection = () => {
               >
                 <motion.div 
                   variants={fadeIn('right', 0.4 * (index + 1))}
-                  className="w-12 h-12 flex items-center justify-center rounded-lg"
+                  className="w-12 h-12 flex items-center justify-center text-3xl rounded-xl bg-[#FF9587]/30 text-[#722323]"
                 >
                   {feature.icon}
                 </motion.div>
+
                 <motion.div variants={fadeIn('left', 0.4 * (index + 1))}>
                   <motion.h3 
                     variants={textVariant(0.3)}
-                    className="text-xl font-semibold text-gray-900 mb-2"
+                    className="text-xl font-semibold mb-2 text-[#722323]"
                   >
                     {feature.title}
                   </motion.h3>
+
                   <motion.p 
                     variants={fadeIn('up', 0.4)}
-                    className="text-gray-600"
+                    className="text-[#722323]/80"
                   >
                     {feature.description}
                   </motion.p>

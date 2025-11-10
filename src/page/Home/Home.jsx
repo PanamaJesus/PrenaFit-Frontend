@@ -1,7 +1,6 @@
 import '../../App.css'
 import Navbar from '../../components/Navbar'
 import Hero from '../../components/Hero'
-import CompanyLogo from '../../components/CompanyLogo'
 import PurposeSection from '../../components/PurposeSection'
 import FeaturesSection from '../../components/FeaturesSection'
 import ScheduleSection from '../../components/ScheduleSection'
@@ -19,15 +18,14 @@ function Home() {
       <div className="overflow-hidden">
         <Navbar />
         <Hero />
-        <CompanyLogo />
         <PurposeSection />
         <FeaturesSection />
         <ScheduleSection />
-        <MonitorSection />
-        <PricingSection />
+        {/* <MonitorSection />
+        <PricingSection /> */}
         <ServicesSection />
-        <TestimonialsSection />
-        <NewsletterSection />
+        {/* <TestimonialsSection /> */}
+        {/* <NewsletterSection /> */}
         <Footer />
       </div>
     </main>

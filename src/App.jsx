@@ -5,8 +5,8 @@ import ContenidoUsuario from "./page/Contenido/ContenidoUsuario";
 import IdxEmb from "./page/embarazadas/indexemb";
 import IdxAdmin from "./page/admin/indexadmin";
 
-import Login from "./page/login/Login";
-
+// import Login from "./page/login/Login";
+import IdxLogin from "./page/login/IdxLogin";
 import './App.css';
 import './index.css';
 
@@ -34,7 +34,7 @@ function App() {
         <Route path="/" element={<Home />} />
 
         {/* ✅ Login y Registro */}
-        <Route path="/login" element={<Login />} />
+        <Route path="/login" element={<IdxLogin />} />
 
         {/* ✅ Ruta protegida solo para admins */}
         <Route
