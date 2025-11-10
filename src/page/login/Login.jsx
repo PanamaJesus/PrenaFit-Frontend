@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 
 export default function Login() {
   const navigate = useNavigate();
-  const [correo, setCorreo] = useState("");
+  const [correo, setCorreo] = useState("")
+  const [contrasena, setContrasena] = useState("");
   const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
@@ -11,37 +12,56 @@ export default function Login() {
     setError("");
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/login/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ correo }),
-      });
+    const response = await fetch("http://127.0.0.1:8000/api/login/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ correo, contrasena }),
+    });
 
-      if (!response.ok) {
-        setError("Correo no registrado");
-        return;
+    const data = await response.json();
+    console.log(response);
+    if (!response.ok) {
+      switch (response.status) {
+        case 404:
+          setError("Correo no registrado.");
+          break;
+        case 400:
+          setError("Credenciales incorrectas.");
+          break;
+        default:
+          setError("Error en el inicio de sesión. Por favor, intenta de nuevo.");
       }
 
-      const data = await response.json();
-      const usuario = data.usuario;
-
-      // Guardar en sessionStorage
-      sessionStorage.setItem("usuario", JSON.stringify(usuario));
-
-      // 🔥 Redirección según rol
-      if (usuario.rol === 1) {
-        navigate("/IdxAdmin");
-      } else if (usuario.rol === 2) {
-        navigate("/IdxEmb");
-      } else {
-        setError("Rol no reconocido");
-      }
-
-    } catch (err) {
-      setError("Error de conexión con la API");
+      return;
     }
+
+    //Guardar tokens (access y refresh)
+    localStorage.setItem("accessToken", data.access);
+    localStorage.setItem("refreshToken", data.refresh);
+
+    //Guardar información del usuario SOLO si es rol usuario
+    if (data.usuario.rol === 2) {
+      localStorage.setItem("usuario", JSON.stringify(data.usuario));
+    }
+
+    alert("Inicio de sesión exitoso");
+
+    switch (data.usuario.rol) {
+      case 1:
+        navigate("/IdxAdmin"); 
+        break;
+      case 2:
+        navigate("/contenido-usuario"); 
+        break;
+      default:
+        navigate("/"); 
+    }
+  } catch (error) {
+    console.error("Error al iniciar sesión:", error);
+    setError("Ocurrió un error al conectar con el servidor.");
+  }
+  
+  
   };
 
 
@@ -61,15 +81,26 @@ export default function Login() {
 
         <div className="mb-4">
           <label className="block text-gray-700">Correo</label>
-          <input
-            type="email"
-            value={correo}
-            onChange={(e) => setCorreo(e.target.value)}
-            className="w-full p-2 border rounded mt-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
-            placeholder="Ingresa tu correo"
-            required
-          />
+            <input
+              type="email"
+              value={correo}
+              onChange={(e) => setCorreo(e.target.value)}
+              className="w-full p-2 border rounded mt-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              placeholder="Ingresa tu correo"
+              required
+            />
+          <label className="block text-gray-700">Contraseña</label>
+            <input
+              type="password"
+              value={contrasena}
+              onChange={(e) => setContrasena(e.target.value)}
+              className="w-full p-2 border rounded mt-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              placeholder="Ingresa tu contraseña"
+              required
+            />
+            
         </div>
+        
 
         <button
           type="submit"
