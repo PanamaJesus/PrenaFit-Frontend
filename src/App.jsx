@@ -4,6 +4,12 @@ import ContenidoList from "./page/Contenido/ContenidoList";
 import ContenidoUsuario from "./page/Contenido/ContenidoUsuario";
 import IdxEmb from "./page/embarazadas/indexemb";
 import IdxAdmin from "./page/admin/indexadmin";
+import { useState } from 'react'
+import reactLogo from './assets/react.svg'
+import viteLogo from '/vite.svg'
+import './App.css'
+import './index.css' // <== IMPORTANTE
+import MainEjerciciosAdmin from "./page/admin/EjerciciosAdmin.jsx";
 
 import Login from "./page/login/Login";
 
@@ -12,9 +18,10 @@ import './index.css';
 
 // ✅ Componente que protege rutas según rol
 const PrivateRoute = ({ children, role }) => {
-  const user = JSON.parse(sessionStorage.getItem("user"));
+  const user = JSON.parse(sessionStorage.getItem("usuario"));
+  const token = localStorage.getItem("accessToken");
 
-  if (!user) {
+  if (!user || !token) {
     return <Navigate to="/login" replace />;
   }
 
@@ -40,8 +47,9 @@ function App() {
         <Route
           path="/admin"
           element={
-            <PrivateRoute role="admin">
+            <PrivateRoute role={1}>
               <ContenidoList />
+              <MainEjerciciosAdmin/>
             </PrivateRoute>
           }
         />
@@ -50,9 +58,9 @@ function App() {
         <Route
           path="/contenido"
           element={
-            <PrivateRoute role="usuario">
+            
               <ContenidoUsuario />
-            </PrivateRoute>
+            
           }
         />
 
@@ -60,13 +68,13 @@ function App() {
         <Route
           path="/contenido-usuario"
           element={
-            <PrivateRoute role="usuario">
+            <PrivateRoute role={2}>
               <ContenidoUsuario />
             </PrivateRoute>
           }
         />
 
-        <Route path="/IdxEmb" element={< IdxEmb />} />
+        <Route path="/IdxEmb" element={<PrivateRoute role={1}><IdxAdmin /></PrivateRoute>} />
         <Route path="/IdxAdmin" element={< IdxAdmin />} />
 
 
