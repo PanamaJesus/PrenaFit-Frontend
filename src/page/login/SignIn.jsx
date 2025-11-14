@@ -5,8 +5,8 @@ function SignInForm() {
   const navigate = useNavigate();
 
   const [state, setState] = useState({
-    email: "",
-    password: ""
+    correo: "",
+    contrasena: ""
   });
 
   const [error, setError] = useState("");
@@ -33,12 +33,16 @@ function SignInForm() {
         },
         body: JSON.stringify({
           correo: email,
-          password: password
+          contrasena: password
         }),
       });
 
       const data = await response.json();
 
+      console.log(JSON.stringify({
+          correo: email,
+          contrasena: password
+        }));
       if (!response.ok) {
         setError(data.error || "Error en el inicio de sesión");
         return;
