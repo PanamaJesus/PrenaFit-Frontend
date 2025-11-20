@@ -4,6 +4,8 @@ import ContenidoList from "./page/Contenido/ContenidoList";
 import ContenidoUsuario from "./page/Contenido/ContenidoUsuario";
 import IdxEmb from "./page/embarazadas/indexemb";
 import IdxAdmin from "./page/admin/indexadmin";
+import IndexEstadisticas from "./page/embarazadas/estadisticas/IndexEstadisticas.jsx";
+import IndexRutinas from "./page/embarazadas/rutinas/IndexRutinas.jsx";
 import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
@@ -17,15 +19,19 @@ import './App.css';
 import './index.css';
 
 // ✅ Componente que protege rutas según rol
-const PrivateRoute = ({ children, role }) => {
-  const user = JSON.parse(sessionStorage.getItem("usuario"));
+const PrivateRoute = ({ children, rol }) => {
+  const userString = localStorage.getItem("usuario");
+  const user = userString ? JSON.parse(userString) : null;
   const token = localStorage.getItem("accessToken");
+
+  console.log("Usuario en PrivateRoute:", user);
+  console.log("user.role:", user ? user.rol : "No user");
 
   if (!user || !token) {
     return <Navigate to="/login" replace />;
   }
 
-  if (role && user.role !== role) {
+  if (rol && Number(user.rol) !== Number(rol)) {
     return <Navigate to="/" replace />;
   }
 
@@ -55,14 +61,14 @@ function App() {
         />
 
         {/* ✅ Ruta protegida para usuario normal */}
-        <Route
+        {/* <Route
           path="/contenido"
           element={
             
               <ContenidoUsuario />
             
           }
-        />
+        /> */}
 
         {/* ✅ Para compatibilidad con la ruta que ya tenías */}
         <Route
@@ -74,7 +80,10 @@ function App() {
           }
         />
 
-        <Route path="/IdxEmb" element={<PrivateRoute role={1}><IdxAdmin /></PrivateRoute>} />
+        <Route path="/IdxEmb" element={<PrivateRoute role={2}><IdxEmb /></PrivateRoute>} />
+        <Route path="/Estadisticas" element={<PrivateRoute role={2}><IndexEstadisticas /></PrivateRoute>} />
+        <Route path="/Rutinas" element={<PrivateRoute role={2}><IndexRutinas /></PrivateRoute>} />
+
         <Route path="/IdxAdmin" element={< IdxAdmin />} />
 
 

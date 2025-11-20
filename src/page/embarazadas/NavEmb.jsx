@@ -8,10 +8,11 @@ const NavbarE = () => {
   const [activeLink, setActiveLink] = useState('#home')
 
   const navLinks = [
-    { href: "/", label: "Inicio" },
-    { href: "/contenido", label: "Contenido Educativo" },
-    { href: "#", label: "Rutinas" },
+    { href: "/IdxEmb", label: "Inicio" },
+    { href: "/Estadisticas", label: "Signos vitales" },
+    { href: "/Rutinas", label: "Rutinas" },
     { href: "#", label: "Ejercicios" },
+    { href: "/contenido-usuario", label: "Contenido Educativo" },
   ]
 
   return (

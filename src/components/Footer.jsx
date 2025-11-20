@@ -35,10 +35,11 @@ const Footer = () => {
       whileInView="show"
       className="bg-[#FFECCC]"
     >
-      <div className="section-container">
+      <div className="w-full px-6 py-8">
+
         <motion.div 
           variants={fadeIn('up', 0.3)}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-12"
+          className=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-12"
         >
           {/* Brand / Logo */}
           <motion.div 

@@ -49,14 +49,16 @@ function SignInForm() {
       }
 
       const usuario = data.usuario;
+      console.log(usuario);
 
-      // ✅ Guardar datos del usuario en sessionStorage
-      sessionStorage.setItem("usuario", JSON.stringify(usuario));
+      localStorage.setItem("accessToken", data.access);
+      localStorage.setItem("refreshToken", data.refresh);
 
       // ✅ Redirección según rol
       if (usuario.rol === 1) {
         navigate("/IdxAdmin");
       } else if (usuario.rol === 2) {
+        localStorage.setItem("usuario", JSON.stringify(usuario));
         navigate("/IdxEmb");
       } else {
         setError("Rol no reconocido");
