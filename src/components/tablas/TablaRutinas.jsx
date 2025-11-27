@@ -47,8 +47,9 @@ export default function TablaRutinas({ rutinas = [], rangos = {} }) {
   };
 
   return (
-    <div className="container mx-auto px-5 py-8 overflow-x-auto">
-      <table className="w-full text-left border-collapse min-w-[600px]">
+    <div className="w-full max-w-none px-5 py-8 overflow-x-auto">
+
+  <table className="w-full text-left border-collapse min-w-[600px]">
         <thead>
           <tr className="bg-gray-200 text-gray-700">
             <th className="p-3">Rutina</th>

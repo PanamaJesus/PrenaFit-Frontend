@@ -15,6 +15,13 @@ const NavbarE = () => {
     { href: "/contenido-usuario", label: "Contenido Educativo" },
   ]
 
+  const handleLogout = () => {
+  localStorage.removeItem("accessToken","refreshToken","usuario");
+  localStorage.removeItem("refreshToken");
+  localStorage.removeItem("usuario");
+  window.location.href = "/#"; 
+};
+
   return (
     <motion.nav 
       variants={fadeIn('down', 0.2)}
@@ -23,7 +30,7 @@ const NavbarE = () => {
       viewport={{ once: true }}
       className="fixed top-0 left-0 right-0 bg-white/90 backdrop-blur-sm z-50 border-b border-gray-100 shadow-sm"
     >
-      <div className="w-full flex justify-between items-center container mx-auto px-4 sm:px-6 lg:px-8 md:h-20 h-16">
+      <div className="w-full flex justify-between items-center max-w-none mx-0 sm:px-6 lg:px-8 md:h-20 h-16">
         {/* Logo */}
         <motion.div 
           variants={fadeIn('right', 0.3)}
@@ -71,6 +78,7 @@ const NavbarE = () => {
         </motion.div>
 
         {/* CTA Button */}
+        <motion.div className="flex items-center display-flex">
         <motion.button 
           variants={fadeIn('left', 0.3)}
           whileHover={{ scale: 1.05 }}
@@ -79,6 +87,16 @@ const NavbarE = () => {
         >
           <a href="/#">Perfil</a>
         </motion.button>
+        <motion.button 
+          variants={fadeIn('left', 0.3)}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={handleLogout}
+          className="hidden md:block bg-red-600 text-white px-6 py-2.5 rounded-lg hover:bg-red-700 text-sm font-medium transition-all hover:shadow-lg hover:shadow-red-100 ml-3"
+        >
+          Cerrar sesión
+        </motion.button>
+        </motion.div>
       </div>
 
       {/* Mobile Menu */}
@@ -91,7 +109,7 @@ const NavbarE = () => {
         >
           <motion.div 
             variants={fadeIn('down', 0.3)}
-            className="container mx-auto px-4 space-y-4"
+            className="px-4 space-y-4"
           >
             {navLinks.map((link, index) => (
               <motion.a
@@ -115,6 +133,15 @@ const NavbarE = () => {
               className="w-full bg-blue-600 text-white px-6 py-2.5 rounded-lg hover:bg-blue-700 text-sm font-medium transition-all hover:shadow-lg hover:shadow-blue-100"
             >
               Get in touch
+            </motion.button>
+            <motion.button 
+              variants={fadeIn('up', 0.4)}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={handleLogout}
+              className="w-full bg-red-600 text-white px-6 py-2.5 rounded-lg hover:bg-red-700 text-sm font-medium transition-all hover:shadow-lg hover:shadow-red-100"
+            >
+              Cerrar sesión
             </motion.button>
           </motion.div>
         </motion.div>

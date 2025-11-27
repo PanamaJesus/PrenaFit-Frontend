@@ -5,6 +5,7 @@ import Footer from '../../../components/Footer'
 import UltimasLecturas from "./UltimasLecturas";
 import DatosRutinas from "./DatosRutinas";
 import HistogramaRutinas from "../../../components/charts/HistogramaRutinas";
+import { div } from "framer-motion/client";
 
 function IndexEstadisticas() {
   const lecturasMock = [
@@ -37,9 +38,11 @@ function IndexEstadisticas() {
 ];
 
   return (
-    <main className="min-h-screen w-full overflow-x-hidden flex flex-col relative p-10">
+    <div>
+    <NavbarE />
+    <main className="w-full overflow-x-hidden flex flex-col relative pt-20 md:pt-24">
 
-      <NavbarE />
+      
 
       {/* 🌈 Fondo decorativo (NO ENCERRAR CONTENIDO) */}
       <div className="absolute -top-28 -left-28 w-[500px] h-[500px] 
@@ -48,7 +51,7 @@ function IndexEstadisticas() {
       </div>
 
       {/* CONTENIDO REAL */}
-      <div className="flex-1 w-full px-6 py-10 max-w-7xl mx-auto">
+      <div className="flex-1 w-full px-6 py-10">
 
         <h1 className="text-4xl font-extrabold text-gray-800 mb-8">
           Signos vitales y Estadísticas
@@ -66,37 +69,14 @@ function IndexEstadisticas() {
         
 
         <HistogramaRutinas/>
-        
-        {/* 🔥 SECCIÓN DE GRÁFICAS (opcional)
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          
-          <BarCard 
-            title="Actividad Semanal"
-            data={[
-              { name: "Lun", value: 1200 },
-              { name: "Mar", value: 1600 },
-              { name: "Mié", value: 1000 },
-              { name: "Jue", value: 1800 },
-              { name: "Vie", value: 2100 }
-            ]}
-          />
 
-          <LineCard 
-            title="Histórico de FC"
-            data={[
-              { fecha: "01 Ene", valor: 85 },
-              { fecha: "02 Ene", valor: 88 },
-              { fecha: "03 Ene", valor: 90 },
-              { fecha: "04 Ene", valor: 87 }
-            ]}
-          />
-        </div>
-        */}
 
       </div>
 
-      <Footer />
+     
     </main>
+      <Footer />
+    </div>
   );
 }
 
