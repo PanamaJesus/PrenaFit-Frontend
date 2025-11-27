@@ -11,7 +11,7 @@ const NavbarE = () => {
     { href: "/IdxEmb", label: "Inicio" },
     { href: "/Estadisticas", label: "Signos vitales" },
     { href: "/Rutinas", label: "Rutinas" },
-    { href: "#", label: "Ejercicios" },
+    { href: "/Ejercicios", label: "Ejercicios" },
     { href: "/contenido-usuario", label: "Contenido Educativo" },
   ]
 
@@ -75,9 +75,9 @@ const NavbarE = () => {
           variants={fadeIn('left', 0.3)}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className="hidden md:block bg-blue-600 text-white px-6 py-2.5 rounded-lg hover:bg-blue-700 text-sm font-medium transition-all hover:shadow-lg hover:shadow-blue-100"
+          className="hidden md:block bg-[#A83279] text-white px-6 py-2.5 rounded-lg hover:bg-blue-700 text-sm font-medium transition-all hover:shadow-lg hover:shadow-blue-100"
         >
-          <a href="/#">Perfil</a>
+          <a href="/Profile">Perfil</a>
         </motion.button>
       </div>
 
@@ -112,7 +112,7 @@ const NavbarE = () => {
               variants={fadeIn('up', 0.4)}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="w-full bg-blue-600 text-white px-6 py-2.5 rounded-lg hover:bg-blue-700 text-sm font-medium transition-all hover:shadow-lg hover:shadow-blue-100"
+              className="w-full bg-[#A83279] text-white px-6 py-2.5 rounded-lg hover:bg-blue-700 text-sm font-medium transition-all hover:shadow-lg hover:shadow-blue-100"
             >
               Get in touch
             </motion.button>

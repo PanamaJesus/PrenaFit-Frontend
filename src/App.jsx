@@ -6,6 +6,10 @@ import IdxEmb from "./page/embarazadas/indexemb";
 import IdxAdmin from "./page/admin/indexadmin";
 import IndexEstadisticas from "./page/embarazadas/estadisticas/IndexEstadisticas.jsx";
 import IndexRutinas from "./page/embarazadas/rutinas/IndexRutinas.jsx";
+import Ejercicios from "./page/embarazadas/Ejercicios.jsx";
+import Profile from "./page/embarazadas/perfil.jsx";
+import UpdateProfile from "./page/embarazadas/UpdateProfile.jsx";
+import AllEjercicios from "./page/embarazadas/AllEjercicios.jsx";
 import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
@@ -19,24 +23,44 @@ import './App.css';
 import './index.css';
 
 // ✅ Componente que protege rutas según rol
-const PrivateRoute = ({ children, rol }) => {
+const PrivateRoute = ({ children, role }) => {
   const userString = localStorage.getItem("usuario");
   const user = userString ? JSON.parse(userString) : null;
   const token = localStorage.getItem("accessToken");
 
   console.log("Usuario en PrivateRoute:", user);
-  console.log("user.role:", user ? user.rol : "No user");
 
   if (!user || !token) {
     return <Navigate to="/login" replace />;
   }
 
-  if (rol && Number(user.rol) !== Number(rol)) {
+  if (role && Number(user.rol) !== Number(role)) {
     return <Navigate to="/" replace />;
   }
 
   return children;
 };
+
+// lo cambie porque me daba error en una cosa para el perfil
+
+// const PrivateRoute = ({ children, rol }) => {
+//   const userString = localStorage.getItem("usuario");
+//   const user = userString ? JSON.parse(userString) : null;
+//   const token = localStorage.getItem("accessToken");
+
+//   console.log("Usuario en PrivateRoute:", user);
+//   console.log("user.role:", user ? user.rol : "No user");
+
+//   if (!user || !token) {
+//     return <Navigate to="/login" replace />;
+//   }
+
+//   if (rol && Number(user.rol) !== Number(rol)) {
+//     return <Navigate to="/" replace />;
+//   }
+
+//   return children;
+// };
 
 function App() {
   return (
@@ -83,6 +107,12 @@ function App() {
         <Route path="/IdxEmb" element={<PrivateRoute role={2}><IdxEmb /></PrivateRoute>} />
         <Route path="/Estadisticas" element={<PrivateRoute role={2}><IndexEstadisticas /></PrivateRoute>} />
         <Route path="/Rutinas" element={<PrivateRoute role={2}><IndexRutinas /></PrivateRoute>} />
+        
+        {/* Agregadas x chela */}
+        <Route path="/Ejercicios" element={<PrivateRoute role={2}><Ejercicios /></PrivateRoute>} />
+        <Route path="/Profile" element={<PrivateRoute role={2}><Profile /></PrivateRoute>} />
+        <Route path="/UpdProfile" element={<PrivateRoute role={2}><UpdateProfile  /></PrivateRoute>} />
+        {/* <Route path="/AllEjercicios" element={<PrivateRoute role={2}><AllEjercicios /></PrivateRoute>} /> */}
 
         <Route path="/IdxAdmin" element={< IdxAdmin />} />
 

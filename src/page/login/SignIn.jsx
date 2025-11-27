@@ -23,7 +23,7 @@ function SignInForm() {
     e.preventDefault();
     setError("");
 
-    const { email, password } = state;
+    const { correo, contrasena } = state;
 
     try {
       const response = await fetch("http://127.0.0.1:8000/api/login/", {
@@ -32,16 +32,16 @@ function SignInForm() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          correo: email,
-          contrasena: password
+          correo: correo,
+          contrasena: contrasena
         }),
       });
 
       const data = await response.json();
 
       console.log(JSON.stringify({
-          correo: email,
-          contrasena: password
+          correo: correo,
+          contrasena: contrasena
         }));
       if (!response.ok) {
         setError(data.error || "Error en el inicio de sesión");
@@ -97,7 +97,7 @@ function SignInForm() {
 
         <input
           type="email"
-          name="email"
+          name="correo"
           placeholder="Email"
           value={state.email}
           onChange={handleChange}
@@ -106,7 +106,7 @@ function SignInForm() {
 
         <input
           type="password"
-          name="password"
+          name="contrasena"
           placeholder="Password"
           value={state.password}
           onChange={handleChange}

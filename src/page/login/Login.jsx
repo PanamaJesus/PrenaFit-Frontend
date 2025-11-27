@@ -35,9 +35,12 @@ export default function Login() {
       return;
     }
 
-    //Guardar tokens (access y refresh)
+    //Guardar tokens
     localStorage.setItem("accessToken", data.access);
     localStorage.setItem("refreshToken", data.refresh);
+
+    // Guardar userId para el perfil y update
+    sessionStorage.setItem("userId", data.usuario.id);
 
     //Guardar información del usuario SOLO si es rol usuario
     if (data.usuario.rol === 2) {
