@@ -29,7 +29,7 @@ const FeaturesSection = () => {
       variants={fadeIn("up", 0.2)}
       initial="hidden"
       whileInView="show"
-      className="max-w-7xl mx-auto px-4 py-16"
+      className=" mx-auto px-4 py-16"
     >
       <motion.div variants={fadeIn("up", 0.3)} className="text-center mb-12">
         <motion.h2 variants={textVariant(0.2)} className="text-3xl font-bold mb-4 text-[#722323]">

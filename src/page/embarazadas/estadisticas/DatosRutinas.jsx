@@ -34,8 +34,9 @@ export default function DatosRutinas() {
   if (cargando) return <p>Cargando rutinas...</p>;
 
   return (
-    <div className="container mx-auto px-5 py-8">
-      <h1 className="text-2xl font-bold text-gray-800 mb-6">
+<div className="w-full max-w-none px-5 py-8 mx-0">
+
+<h1 className="text-2xl font-bold text-gray-800 mb-6">
         Datos de Rutinas Realizadas
       </h1>
 
