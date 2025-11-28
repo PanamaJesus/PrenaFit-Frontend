@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function Login() {
   const navigate = useNavigate();
-  const [correo, setCorreo] = useState("")
+  const [correo, setCorreo] = useState("");
   const [contrasena, setContrasena] = useState("");
   const [error, setError] = useState("");
 
@@ -12,61 +12,54 @@ export default function Login() {
     setError("");
 
     try {
-    const response = await fetch("http://127.0.0.1:8000/api/login/", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ correo, contrasena }),
-    });
+      const response = await fetch("http://127.0.0.1:8000/api/login/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ correo, contrasena }),
+      });
 
-    const data = await response.json();
-    console.log(response);
-    if (!response.ok) {
-      switch (response.status) {
-        case 404:
-          setError("Correo no registrado.");
-          break;
-        case 400:
-          setError("Credenciales incorrectas.");
-          break;
-        default:
-          setError("Error en el inicio de sesión. Por favor, intenta de nuevo.");
+      const data = await response.json();
+
+      if (!response.ok) {
+        switch (response.status) {
+          case 404:
+            setError("Correo no registrado.");
+            break;
+          case 400:
+            setError("Credenciales incorrectas.");
+            break;
+          default:
+            setError("Error en el inicio de sesión. Por favor, intenta de nuevo.");
+        }
+        return;
       }
 
-      return;
-    }
+      // Guardar tokens
+      localStorage.setItem("accessToken", data.access);
+      localStorage.setItem("refreshToken", data.refresh);
 
-    //Guardar tokens
-    localStorage.setItem("accessToken", data.access);
-    localStorage.setItem("refreshToken", data.refresh);
-
-    // Guardar userId para el perfil y update
-    sessionStorage.setItem("userId", data.usuario.id);
-
-    //Guardar información del usuario SOLO si es rol usuario
-    if (data.usuario.rol === 2) {
+      // Guardar información del usuario siempre
       localStorage.setItem("usuario", JSON.stringify(data.usuario));
-    }
+      sessionStorage.setItem("userId", data.usuario.id);
 
-    alert("Inicio de sesión exitoso");
+      alert("Inicio de sesión exitoso");
 
-    switch (data.usuario.rol) {
-      case 1:
-        navigate("/IdxAdmin"); 
-        break;
-      case 2:
-        navigate("/contenido-usuario"); 
-        break;
-      default:
-        navigate("/"); 
+      // Navegar según rol
+      switch (data.usuario.rol) {
+        case 1:
+          navigate("/IdxAdmin"); 
+          break;
+        case 2:
+          navigate("/contenido-usuario"); 
+          break;
+        default:
+          navigate("/"); 
+      }
+    } catch (error) {
+      console.error("Error al iniciar sesión:", error);
+      setError("Ocurrió un error al conectar con el servidor.");
     }
-  } catch (error) {
-    console.error("Error al iniciar sesión:", error);
-    setError("Ocurrió un error al conectar con el servidor.");
-  }
-  
-  
   };
-
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
@@ -84,26 +77,24 @@ export default function Login() {
 
         <div className="mb-4">
           <label className="block text-gray-700">Correo</label>
-            <input
-              type="email"
-              value={correo}
-              onChange={(e) => setCorreo(e.target.value)}
-              className="w-full p-2 border rounded mt-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
-              placeholder="Ingresa tu correo"
-              required
-            />
-          <label className="block text-gray-700">Contraseña</label>
-            <input
-              type="password"
-              value={contrasena}
-              onChange={(e) => setContrasena(e.target.value)}
-              className="w-full p-2 border rounded mt-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
-              placeholder="Ingresa tu contraseña"
-              required
-            />
-            
+          <input
+            type="email"
+            value={correo}
+            onChange={(e) => setCorreo(e.target.value)}
+            className="w-full p-2 border rounded mt-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            placeholder="Ingresa tu correo"
+            required
+          />
+          <label className="block text-gray-700 mt-4">Contraseña</label>
+          <input
+            type="password"
+            value={contrasena}
+            onChange={(e) => setContrasena(e.target.value)}
+            className="w-full p-2 border rounded mt-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            placeholder="Ingresa tu contraseña"
+            required
+          />
         </div>
-        
 
         <button
           type="submit"

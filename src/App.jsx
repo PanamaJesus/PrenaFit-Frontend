@@ -3,6 +3,8 @@ import Home from "./page/Home/Home";
 import ContenidoList from "./page/Contenido/ContenidoList";
 import ContenidoUsuario from "./page/Contenido/ContenidoUsuario";
 import IdxEmb from "./page/embarazadas/indexemb";
+import IndexAdmin2 from "./page/admin/indexadmin2"; // ← Cambio aquí
+import './index.css'
 import IdxAdmin from "./page/admin/indexadmin";
 import IndexEstadisticas from "./page/embarazadas/estadisticas/IndexEstadisticas.jsx";
 import IndexRutinas from "./page/embarazadas/rutinas/IndexRutinas.jsx";
@@ -17,7 +19,6 @@ import './App.css'
 import './index.css' // <== IMPORTANTE
 import MainEjerciciosAdmin from "./page/admin/EjerciciosAdmin.jsx";
 
-// import Login from "./page/login/Login";
 import IdxLogin from "./page/login/IdxLogin";
 import './App.css';
 import './index.css';
@@ -87,13 +88,13 @@ function App() {
         {/*Login y Registro */}
         <Route path="/login" element={<PublicRoute><IdxLogin /></PublicRoute>} />
 
+        {/* ✅ Ruta protegida solo para admins - Ahora usa indexadmin2.jsx */}
         {/* Ruta protegida solo para admins */}
         <Route
-          path="/admin"
+          path="/admin/*"
           element={
-            <PrivateRoute rol={1}>
-              <ContenidoList />
-              <MainEjerciciosAdmin/>
+            <PrivateRoute role={1}>
+              <IndexAdmin2 />
             </PrivateRoute>
           }
         />
@@ -102,9 +103,7 @@ function App() {
         {/* <Route
           path="/contenido"
           element={
-            
-              <ContenidoUsuario />
-            
+            <ContenidoUsuario />
           }
         /> */}
 
@@ -118,6 +117,8 @@ function App() {
           }
         />
 
+        <Route path="/IdxEmb" element={<PrivateRoute role={1}><IndexAdmin2 /></PrivateRoute>} />
+        <Route path="/IdxAdmin" element={<IndexAdmin2/>} />
         <Route path="/IdxEmb" element={<PrivateRoute role={2}><IdxEmb /></PrivateRoute>} />
         <Route path="/Estadisticas" element={<PrivateRoute role={2}><IndexEstadisticas /></PrivateRoute>} />
         <Route path="/Rutinas" element={<PrivateRoute role={2}><IndexRutinas /></PrivateRoute>} />
@@ -131,7 +132,7 @@ function App() {
         <Route path="/Estadisticas" element={<PrivateRoute rol={2}><IndexEstadisticas /></PrivateRoute>} />
         <Route path="/Rutinas" element={<PrivateRoute rol={2}><IndexRutinas /></PrivateRoute>} />
 
-        <Route path="/IdxAdmin" element={< IdxAdmin />} />
+        
 
 
       </Routes>
@@ -140,25 +141,3 @@ function App() {
 }
 
 export default App;
-
-// import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-// import Home from "./page/Home/Home";
-// import ContenidoList from "./page/Contenido/ContenidoList";
-// import ContenidoUsuario from "./page/Contenido/ContenidoUsuario";
-// import './App.css';
-// import './index.css';
-
-// function App() {
-//   return (
-//     <Router>
-//       <Routes>
-//         <Route path="/" element={<Home />} />
-//         <Route path="/admin" element={<ContenidoList />} />
-//         <Route path="/contenido" element={<ContenidoUsuario />} />
-//         <Route path="/contenido-usuario" element={<ContenidoUsuario />} />
-//       </Routes>
-//     </Router>
-//   );
-// }
-
-// export default App;
