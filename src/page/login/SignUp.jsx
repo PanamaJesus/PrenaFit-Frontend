@@ -279,4 +279,4 @@ export default function SignUpForm() {
   </div>
   );
 }
-}
+
