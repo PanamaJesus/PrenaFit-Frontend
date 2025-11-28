@@ -1,19 +1,44 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 export default function SignUpForm() {
+  const [icons, setIcons] = useState([]);
+
   const [state, setState] = useState({
     nombre: "",
     ap_pat: "",
     ap_mat: "",
     correo: "",
-    password: "",
+    contrasena: "",
     semana_embarazo: "",
+    rol: 2,
     codigo_vinculacion: "",
-    estado: false
+    estado: true,
+    imagen_perfil: null,
+    fecha_nacimiento: null
   });
 
+  // 🔹 Cargar íconos del backend
+  useEffect(() => {
+    async function cargarIconos() {
+      try {
+        const res = await fetch("http://127.0.0.1:8000/api/imagenes/");
+        const data = await res.json();
+
+        console.log("📌 Íconos recibidos del backend:", data);
+        setIcons(data);
+
+      } catch (error) {
+        console.error("❌ Error cargando íconos:", error);
+      }
+    }
+    cargarIconos();
+  }, []);
+
+  // 🔹 Tracear los inputs en tiempo real
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
+
+    console.log(`✏️ Input cambiado: ${name} =`, type === "checkbox" ? checked : value);
 
     setState({
       ...state,
@@ -21,15 +46,19 @@ export default function SignUpForm() {
     });
   };
 
+  // 🔹 Enviar el formulario
   const handleOnSubmit = async (e) => {
     e.preventDefault();
 
     const payload = {
       ...state,
+       fecha_nacimiento: state.fecha_nacimiento || null,
       semana_embarazo:
         state.semana_embarazo === "" ? null : Number(state.semana_embarazo),
-      rol: 2 // ✅ rol por defecto sin pedirlo en el formulario
+      rol: 2
     };
+
+    console.log("📤 JSON que se enviará al backend:", payload);
 
     try {
       const response = await fetch("http://127.0.0.1:8000/api/register/", {
@@ -40,6 +69,8 @@ export default function SignUpForm() {
 
       const data = await response.json();
 
+      console.log("Respuesta del backend:", data);
+
       if (!response.ok) {
         alert("Error: " + (data.error || "No se pudo registrar"));
         return;
@@ -48,22 +79,26 @@ export default function SignUpForm() {
       alert("✅ Registro exitoso");
       console.log("Usuario registrado:", data);
 
-      // Reset
       setState({
         nombre: "",
         ap_pat: "",
         ap_mat: "",
         correo: "",
-        password: "",
+        contrasena: "",
         semana_embarazo: "",
+        rol: 2,
         codigo_vinculacion: "",
-        estado: false
+        estado: true,
+        imagen_perfil: null,
+        fecha_nacimiento: null
       });
+
     } catch (error) {
+      console.error("❌ Error al conectar con backend:", error);
       alert("Error al conectar con el servidor");
-      console.error(error);
     }
   };
+
   const [step, setStep] = React.useState(1);
   const nextStep = () => setStep((prev) => Math.min(prev + 1, 4));
   const prevStep = () => setStep((prev) => Math.max(prev - 1, 1));
@@ -72,14 +107,14 @@ export default function SignUpForm() {
   <div className="form-container form-animation sign-up flex items-center justify-center">
     <form
       onSubmit={handleOnSubmit}
-      className="bg-white flex flex-col items-center justify-center px-10 h-full text-center"
+      className="bg-white flex flex-col items-center justify-center h-full text-center"
     >
       <h1 className="text-3xl font-bold mb-3">Create Account</h1>
       <span className="text-xs text-gray-600 mb-4">
         Register with your personal information
       </span>
 
-      {/* ✅ PASO 1 */}
+      {/* PASO 1 */}
       {step === 1 && (
         <>
           <input
@@ -101,12 +136,7 @@ export default function SignUpForm() {
             className="bg-gray-200 px-4 py-3 my-2 w-full rounded"
             required
           />
-        </>
-      )}
 
-      {/* ✅ PASO 2 */}
-      {step === 2 && (
-        <>
           <input
             type="text"
             name="ap_mat"
@@ -117,6 +147,31 @@ export default function SignUpForm() {
             required
           />
 
+          <input
+            type="date"
+            name="fecha_nacimiento"
+            value={state.fecha_nacimiento ?? ""}
+            onChange={handleChange}
+            className="bg-gray-200 px-4 py-3 my-2 w-full rounded"
+            required
+          />
+
+          <input
+            type="number"
+            name="semana_embarazo"
+            placeholder="Semana de embarazo"
+            value={state.semana_embarazo}
+            onChange={handleChange}
+            className="bg-gray-200 px-4 py-3 my-2 w-full rounded"
+            min="1"
+            required
+          />
+        </>
+      )}
+
+      {/* PASO 2 */}
+      {step === 2 && (
+        <>
           <input
             type="email"
             name="correo"
@@ -129,56 +184,64 @@ export default function SignUpForm() {
         </>
       )}
 
-      {/* ✅ PASO 3 */}
+      {/* PASO 3 */}
       {step === 3 && (
         <>
           <input
             type="password"
-            name="password"
+            name="contrasena"
             placeholder="Contraseña"
-            value={state.password}
+            value={state.contrasena}
             onChange={handleChange}
             className="bg-gray-200 px-4 py-3 my-2 w-full rounded"
             required
           />
-
-          <input
-            type="number"
-            name="semana_embarazo"
-            placeholder="Semana de embarazo (opcional)"
-            value={state.semana_embarazo}
-            onChange={handleChange}
-            className="bg-gray-200 px-4 py-3 my-2 w-full rounded"
-            min="1"
-          />
         </>
       )}
 
-      {/* ✅ PASO 4 */}
+      {/* PASO 4 */}
       {step === 4 && (
         <>
-          <input
-            type="text"
-            name="codigo_vinculacion"
-            placeholder="Código de vinculación (opcional)"
-            value={state.codigo_vinculacion}
-            onChange={handleChange}
-            className="bg-gray-200 px-4 py-3 my-2 w-full rounded"
-          />
+          <h2 className="text-lg font-semibold mb-3">Selecciona tu ícono</h2>
 
-          <label className="flex items-center gap-2 mt-2 text-sm">
-            <input
-              type="checkbox"
-              name="estado"
-              checked={state.estado}
-              onChange={handleChange}
-            />
-            Activo
-          </label>
+          <div className="grid grid-cols-3 gap-4 mb-4">
+            {icons.map((icon) => (
+              <label
+                key={icon.id}
+                className={`cursor-pointer p-2 rounded-xl border transition transform
+                  ${
+                    state.imagen_perfil === icon.id
+                      ? "border-[#ff4b2b] scale-105 shadow-md"
+                      : "border-gray-300"
+                  }`}
+              >
+                <input
+                  type="radio"
+                  name="imagen_perfil"
+                  value={icon.id}
+                  checked={state.imagen_perfil === icon.id}
+                  onChange={(e) => {
+                    console.log("🖼 Ícono seleccionado:", e.target.value);
+                    setState({
+                      ...state,
+                      imagen_perfil: Number(e.target.value)
+                    });
+                  }}
+                  className="hidden"
+                />
+
+                <img
+                  src={icon.url}
+                  alt="icono perfil"
+                  className="w-16 h-16 object-contain mx-auto"
+                />
+              </label>
+            ))}
+          </div>
         </>
       )}
 
-      {/* ✅ FLECHAS DE NAVEGACIÓN */}
+      {/* FLECHAS */}
       <div className="flex justify-between w-full mt-4">
         {step > 1 ? (
           <button
@@ -205,7 +268,6 @@ export default function SignUpForm() {
         )}
       </div>
 
-      {/* ✅ BOTÓN FINAL */}
       {step === 4 && (
         <button
           className="mt-4 rounded-full px-10 py-3 text-white text-xs font-bold bg-[#ff4b2b] uppercase hover:scale-95 transition"
@@ -215,5 +277,5 @@ export default function SignUpForm() {
       )}
     </form>
   </div>
-);
+  );
 }

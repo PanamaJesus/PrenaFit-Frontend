@@ -3,34 +3,32 @@ import Home from "./page/Home/Home";
 import ContenidoList from "./page/Contenido/ContenidoList";
 import ContenidoUsuario from "./page/Contenido/ContenidoUsuario";
 import IdxEmb from "./page/embarazadas/indexemb";
-import IdxAdmin from "./page/admin/indexadmin";
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import './index.css' // <== IMPORTANTE
+import IndexAdmin2 from "./page/admin/indexadmin2"; // ← Cambio aquí
+import './index.css'
 import MainEjerciciosAdmin from "./page/admin/EjerciciosAdmin.jsx";
 
-// import Login from "./page/login/Login";
 import IdxLogin from "./page/login/IdxLogin";
 import './App.css';
 import './index.css';
 
 // ✅ Componente que protege rutas según rol
 const PrivateRoute = ({ children, role }) => {
-  const user = JSON.parse(sessionStorage.getItem("usuario"));
-  const token = localStorage.getItem("accessToken");
+  // Leer el usuario desde localStorage
+  const user = JSON.parse(localStorage.getItem("usuario"));
 
-  if (!user || !token) {
+  // Si no hay usuario, redirige al login
+  if (!user) {
     return <Navigate to="/login" replace />;
   }
 
-  if (role && user.role !== role) {
+  // Si hay rol definido y no coincide con el rol del usuario, redirige a /
+  if (role && user.rol !== role) {
     return <Navigate to="/" replace />;
   }
 
   return children;
 };
+
 
 function App() {
   return (
@@ -43,13 +41,12 @@ function App() {
         {/* ✅ Login y Registro */}
         <Route path="/login" element={<IdxLogin />} />
 
-        {/* ✅ Ruta protegida solo para admins */}
+        {/* ✅ Ruta protegida solo para admins - Ahora usa indexadmin2.jsx */}
         <Route
-          path="/admin"
+          path="/admin/*"
           element={
             <PrivateRoute role={1}>
-              <ContenidoList />
-              <MainEjerciciosAdmin/>
+              <IndexAdmin2 />
             </PrivateRoute>
           }
         />
@@ -58,9 +55,7 @@ function App() {
         <Route
           path="/contenido"
           element={
-            
-              <ContenidoUsuario />
-            
+            <ContenidoUsuario />
           }
         />
 
@@ -74,9 +69,8 @@ function App() {
           }
         />
 
-        <Route path="/IdxEmb" element={<PrivateRoute role={1}><IdxAdmin /></PrivateRoute>} />
-        <Route path="/IdxAdmin" element={< IdxAdmin />} />
-
+        <Route path="/IdxEmb" element={<PrivateRoute role={1}><IndexAdmin2 /></PrivateRoute>} />
+        <Route path="/IdxAdmin" element={<IndexAdmin2/>} />
 
       </Routes>
     </Router>
@@ -84,25 +78,3 @@ function App() {
 }
 
 export default App;
-
-// import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-// import Home from "./page/Home/Home";
-// import ContenidoList from "./page/Contenido/ContenidoList";
-// import ContenidoUsuario from "./page/Contenido/ContenidoUsuario";
-// import './App.css';
-// import './index.css';
-
-// function App() {
-//   return (
-//     <Router>
-//       <Routes>
-//         <Route path="/" element={<Home />} />
-//         <Route path="/admin" element={<ContenidoList />} />
-//         <Route path="/contenido" element={<ContenidoUsuario />} />
-//         <Route path="/contenido-usuario" element={<ContenidoUsuario />} />
-//       </Routes>
-//     </Router>
-//   );
-// }
-
-// export default App;
