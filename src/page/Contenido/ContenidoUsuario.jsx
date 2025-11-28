@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import NavbarE from '../embarazadas/NavEmb'
 
 function ContenidoUsuario() {
   const [contenidos, setContenidos] = useState([]);
@@ -34,58 +35,65 @@ function ContenidoUsuario() {
   });
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Contenido educativo</h1>
+    <main className="relative min-h-screen overflow-x-hidden">
+      <div className="absolute -top-28 -left-28 w-[500px] h-[500px] bg-gradient-to-tr from-indigo-500/20 to-pink-500/20 rounded-full blur-[80px] -z-10"></div>
 
-      {/* Filtros */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
-        {/* Selector de categoría */}
-        <select
-          value={categoria}
-          onChange={(e) => setCategoria(e.target.value)}
-          className="border rounded px-3 py-2"
-        >
-          <option>Todos</option>
-          {tipos.map((t) => (
-            <option key={t.id}>{t.nombre}</option>
-          ))}
-        </select>
+      <div className="overflow-hidden">
+        <NavbarE />
+        <div className="mt-28 px-6">
+          <h1 className="text-2xl font-bold mb-4">Contenido educativo</h1>
 
-        {/* Barra de búsqueda */}
-        <input
-          type="text"
-          placeholder="Buscar..."
-          value={busqueda}
-          onChange={(e) => setBusqueda(e.target.value)}
-          className="border rounded px-3 py-2 flex-1"
-        />
-      </div>
-
-      {/* Grid de contenidos */}
-      <div className="grid md:grid-cols-3 gap-4">
-        {filtrados.map((item) => (
-          <div
-            key={item.id}
-            className="p-4 bg-white rounded-lg shadow hover:shadow-lg transition"
-          >
-            <h2 className="text-lg font-semibold">{item.titulo}</h2>
-            <p className="text-gray-600 mb-3">{item.texto}</p>
-            <a
-              href={item.urls_img}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+          {/* Filtros */}
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
+            {/* Selector de categoría */}
+            <select
+              value={categoria}
+              onChange={(e) => setCategoria(e.target.value)}
+              className="border rounded px-3 py-2"
             >
-              Ver artículo completo
-            </a>
-          </div>
-        ))}
+              <option>Todos</option>
+              {tipos.map((t) => (
+                <option key={t.id}>{t.nombre}</option>
+              ))}
+            </select>
 
-        {filtrados.length === 0 && (
-          <p className="text-gray-500 col-span-full">No se encontraron resultados.</p>
-        )}
+            {/* Barra de búsqueda */}
+            <input
+              type="text"
+              placeholder="Buscar..."
+              value={busqueda}
+              onChange={(e) => setBusqueda(e.target.value)}
+              className="border rounded px-3 py-2 flex-1"
+            />
+          </div>
+
+          {/* Grid de contenidos */}
+          <div className="grid md:grid-cols-3 gap-4">
+            {filtrados.map((item) => (
+              <div
+                key={item.id}
+                className="p-4 bg-white rounded-lg shadow hover:shadow-lg transition"
+              >
+                <h2 className="text-lg font-semibold">{item.titulo}</h2>
+                <p className="text-gray-600 mb-3">{item.texto}</p>
+                <a
+                  href={item.urls_img}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+                >
+                  Ver artículo completo
+                </a>
+              </div>
+            ))}
+
+            {filtrados.length === 0 && (
+              <p className="text-gray-500 col-span-full">No se encontraron resultados.</p>
+            )}
+          </div>
+        </div>
       </div>
-    </div>
+    </main>
   );
 }
 
