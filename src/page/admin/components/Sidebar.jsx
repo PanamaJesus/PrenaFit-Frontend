@@ -22,6 +22,18 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
     navigate(path);
   };
 
+  // ✅ FUNCIÓN DE CERRAR SESIÓN
+  const handleLogout = () => {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("usuario");
+
+    navigate("/"); // volver al login
+
+    // Limpia el estado completo
+    window.location.reload();
+  };
+
   return (
     <aside 
       className={`${isOpen ? 'w-64' : 'w-20'} transition-all duration-300 flex flex-col shadow-2xl`}
@@ -70,7 +82,12 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
           <Settings size={20} />
           {isOpen && <span>Configuración</span>}
         </button>
-        <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-red-900/50 transition-colors text-[#FFECCC]">
+
+        {/* 🔥 AQUI LA ACCIÓN DEL LOGOUT */}
+        <button 
+          onClick={handleLogout}
+          className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-red-900/50 transition-colors text-[#FFECCC]"
+        >
           <LogOut size={20} />
           {isOpen && <span>Cerrar Sesión</span>}
         </button>
