@@ -36,15 +36,20 @@ const PublicRoute = ({ children }) => {
   return children;
 };
 
-// ✅ Componente que protege rutas según rol
 const PrivateRoute = ({ children, role }) => {
   const userString = localStorage.getItem("usuario");
   const user = userString ? JSON.parse(userString) : null;
   const token = localStorage.getItem("accessToken");
 
-  console.log("Usuario en PrivateRoute:", user);
-  console.log("user.rol:", user ? user.rol : "No user");
+  // ⚠️ Flag que marcamos en login
+  const adminLogged = localStorage.getItem("adminLoggedIn") === "true";
 
+  // Si es admin y ya inició sesión, NO lo volvemos a validar
+  if (role === 1 && adminLogged) {
+    return children; // ✔ ya no lo sacamos NUNCA
+  }
+
+  // Validación normal (para usuarios rol 2)
   if (!user || !token) {
     return <Navigate to="/login" replace />;
   }
@@ -55,6 +60,7 @@ const PrivateRoute = ({ children, role }) => {
 
   return children;
 };
+
 
 // lo cambie porque me daba error en una cosa para el perfil
 

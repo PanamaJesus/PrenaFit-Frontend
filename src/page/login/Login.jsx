@@ -47,6 +47,8 @@ export default function Login() {
       // Navegar según rol
       switch (data.usuario.rol) {
         case 1:
+          localStorage.setItem("adminLoggedIn", "true");
+
           navigate("/IdxAdmin"); 
           break;
         case 2:
