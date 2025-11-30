@@ -8,6 +8,10 @@ import Usuario from './pages/Usuario';
 import Ejercicio from './pages/Ejercicio';
 import Contenido from './pages/Contenido';
 import TipoTema from './pages/TipoTema';
+import Rutinas from './pages/Rutinas';
+import Resenas from './pages/Resenas';
+import Historial from './pages/Historial';
+
 
 const IndexAdmin2 = () => {
   return (
@@ -17,10 +21,10 @@ const IndexAdmin2 = () => {
         <Route path="/usuario" element={<Usuario />} />
         <Route path="/ejercicio" element={<Ejercicio />} />
         <Route path="/contenido" element={<Contenido />} />
-        <Route path="/tipotema" element={<div className="p-6"><h1 className="text-2xl font-bold" style={{ color: '#722323' }}>Tipo Tema - Próximamente</h1></div>} />
-        <Route path="/rutina" element={<div className="p-6"><h1 className="text-2xl font-bold" style={{ color: '#722323' }}>Rutina - Próximamente</h1></div>} />
-        <Route path="/resena" element={<div className="p-6"><h1 className="text-2xl font-bold" style={{ color: '#722323' }}>Reseña - Próximamente</h1></div>} />
-        <Route path="/historial" element={<div className="p-6"><h1 className="text-2xl font-bold" style={{ color: '#722323' }}>Historial - Próximamente</h1></div>} />
+        <Route path="/tipotema" element={<TipoTema/>} />
+        <Route path="/rutina" element={<Rutinas/>} />
+        <Route path="/resena" element={<Resenas />} />
+        <Route path="/historial" element={<Historial />} />
       </Routes>
     </AdminLayout>
   );

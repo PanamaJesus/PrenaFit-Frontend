@@ -17,7 +17,8 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 import './index.css' // <== IMPORTANTE
-import MainEjerciciosAdmin from "./page/admin/EjerciciosAdmin.jsx";
+
+
 
 import IdxLogin from "./page/login/IdxLogin";
 import './App.css';
