@@ -7,6 +7,7 @@ const Rutinas = () => {
   const [rutinas, setRutinas] = useState([]);
   const [usuarios, setUsuarios] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [filtroSemana, setFiltroSemana] = useState(""); // filtro por semana
   const [openModal, setOpenModal] = useState(false);
   const [editingRutina, setEditingRutina] = useState(null);
   const [usuarioId, setUsuarioId] = useState(null);
@@ -16,6 +17,8 @@ const Rutinas = () => {
     descripcion: "",
     sug_semanas_em: "",
   });
+
+  const semanasDisponibles = Array.from({ length: 40 }, (_, i) => i + 1);
 
   // ------------------------ GET RUTINAS Y USUARIOS ------------------------
   const obtenerRutinas = async () => {
@@ -106,12 +109,15 @@ const Rutinas = () => {
     return usuario ? usuario.rol === 1 : false;
   };
 
+  // ------------------------ FILTRADO FINAL ------------------------
   const filteredRutinas = rutinas
     .filter(rutina => esAdmin(rutina.usuario)) // solo admins
-    .filter(
-      rutina =>
-        rutina.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        rutina.descripcion.toLowerCase().includes(searchTerm.toLowerCase())
+    .filter(rutina =>
+      rutina.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      rutina.descripcion.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .filter(rutina =>
+      filtroSemana === "" ? true : rutina.sug_semanas_em == parseInt(filtroSemana)
     );
 
   // ------------------------ ABRIR MODAL ------------------------
@@ -159,23 +165,41 @@ const Rutinas = () => {
           </button>
         </div>
 
-        {/* Búsqueda */}
-        <div className="relative max-w-md">
-          <Search
-            className="absolute left-3 top-1/2 transform -translate-y-1/2"
-            style={{ color: "#BA487F" }}
-            size={20}
-          />
-          <input
-            type="text"
-            placeholder="Buscar por nombre o descripción..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 border-2 rounded-lg focus:outline-none focus:ring-2 transition-all"
+        {/* Búsqueda y filtro semana compacto */}
+        <div className="flex flex-row gap-2 max-w-md mb-4">
+          <div className="relative w-2/3">
+            <Search
+              className="absolute left-3 top-1/2 transform -translate-y-1/2"
+              style={{ color: "#BA487F" }}
+              size={18}
+            />
+            <input
+              type="text"
+              placeholder="Buscar por nombre o descripción..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-2 py-2 border-2 rounded-lg focus:outline-none focus:ring-2 transition-all text-sm"
+              style={{ borderColor: "#FFECCC", "--tw-ring-color": "#BA487F" }}
+              onFocus={(e) => (e.target.style.borderColor = "#BA487F")}
+              onBlur={(e) => (e.target.style.borderColor = "#FFECCC")}
+            />
+          </div>
+
+          <select
+            value={filtroSemana}
+            onChange={(e) => setFiltroSemana(e.target.value)}
+            className="w-1/3 pl-2 pr-2 py-2 border-2 rounded-lg focus:outline-none focus:ring-2 transition-all text-sm"
             style={{ borderColor: "#FFECCC", "--tw-ring-color": "#BA487F" }}
             onFocus={(e) => (e.target.style.borderColor = "#BA487F")}
             onBlur={(e) => (e.target.style.borderColor = "#FFECCC")}
-          />
+          >
+            <option value="">Semana</option>
+            {semanasDisponibles.map((sem) => (
+              <option key={sem} value={sem}>
+                {sem}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
 
