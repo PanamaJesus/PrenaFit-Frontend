@@ -1,15 +1,18 @@
 import { useEffect, useState } from "react";
-
+import { useNavigate } from "react-router-dom";
 export default function RutinasSeleccionadas() {
   const [rutinas, setRutinas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [rutinaSeleccionada, setRutinaSeleccionada] = useState(null);
+  const navigate = useNavigate();
+          const usuario = JSON.parse(localStorage.getItem("usuario"));
+
+
 
   useEffect(() => {
     const fetchRutinas = async () => {
       try {
-        const usuario = JSON.parse(localStorage.getItem("usuario"));
         if (!usuario || !usuario.id) return;
 
         const response = await fetch("http://127.0.0.1:8000/api/rutinasguardados/guardadas-usuario/", {
@@ -32,6 +35,7 @@ export default function RutinasSeleccionadas() {
 
   const abrirModal = (rutina) => {
     setRutinaSeleccionada(rutina);
+    console.log("rutina seleccionada:", rutina);
     setModalOpen(true);
   };
 
@@ -41,9 +45,12 @@ export default function RutinasSeleccionadas() {
   };
 
   const eliminarRutina = async () => {
+    console.log("body:", { rutina_id: rutinaSeleccionada.guardado_id, usuario_id: usuario.id });
     try {
-      await fetch(`TU_ENDPOINT_ELIMINAR/${rutinaSeleccionada.id}`, {
+      await fetch(`http://127.0.0.1:8000/api/rutinasguardados/eliminar-guardada/`, {
         method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ rutina_id: rutinaSeleccionada.guardado_id, usuario_id: usuario.id }),
       });
       setRutinas(rutinas.filter(r => r.id !== rutinaSeleccionada.id));
       cerrarModal();
@@ -54,7 +61,20 @@ export default function RutinasSeleccionadas() {
 
   return (
     <div className="p-6">
-      <div className="bg-gray-100 p-6 rounded-xl shadow-lg">
+      <div className="bg-gray-100 p-6 rounded-xl pb-14 shadow-lg relative">
+        <div className="w-full flex justify-between items-center mb-4">
+
+        <h2 className="text-xl font-semibold">Mis rutinas</h2>
+
+    <button
+    className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition"
+    onClick={() => navigate("/Administrar-rutinas")}
+>
+      Administrar rutinas
+  </button>
+</div>
+
+
 
         {loading ? (
           <p className="text-center text-gray-500">Cargando rutinas...</p>
@@ -69,6 +89,16 @@ export default function RutinasSeleccionadas() {
               >
                 <div>
                   <h3 className="text-lg font-semibold mb-2">{rutina.nombre}</h3>
+                   <span
+        className={
+          "text-xs font-semibold px-2 py-1 rounded " +
+          (rutina.es_publica
+            ? "bg-green-200 text-green-800"
+            : "bg-yellow-200 text-yellow-800")
+        }
+      >
+        {rutina.es_publica ? "Pública" : "Privada"}
+      </span>
                   <p className="text-gray-600 text-sm mb-1">
                     Duración: <span className="font-medium">{rutina.duracion_min} min</span>
                   </p>
@@ -80,13 +110,17 @@ export default function RutinasSeleccionadas() {
                   </p>
                 </div>
                 <button
-                  onClick={() => abrirModal(rutina)}
+                  onClick={() =>{ const slug = rutina.nombre.toLowerCase().replace(/ /g, "-");
+                              navigate(`/Rutina/${slug}`);
+                            }
+                      }
                   className="mt-4 bg-blue-600 text-white py-1 px-3 rounded hover:bg-blue-700 transition-colors"
                 >
                     Ver Detalles
                 </button>
                 <button
                   onClick={() => abrirModal(rutina)}
+                  
                   className="mt-4 bg-red-500 text-white py-1 px-3 rounded hover:bg-red-600 transition-colors"
                 >
                   Eliminar

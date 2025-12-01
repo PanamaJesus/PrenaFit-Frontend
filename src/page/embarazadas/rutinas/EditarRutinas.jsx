@@ -1,173 +1,240 @@
+
 import { useEffect, useState } from "react";
 import NavbarE from "../NavEmb";
 import Footer from "../../../components/Footer";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate, useParams } from "react-router-dom";
 
+function EditarRutinas() {
+  const { slug } = useParams();
+  const navigate = useNavigate();
 
-function CrearRutinas() {
+  const nombreOriginal = slug.replace(/-/g, " ");
+
+  const [rutina, setRutina] = useState(null);
   const [ejercicios, setEjercicios] = useState([]);
+  const [iconos, setIconos] = useState([]);
+  const [iconoSeleccionado, setIconoSeleccionado] = useState(null);
+
   const [search, setSearch] = useState("");
-  const [seleccionados, setSeleccionados] = useState([]);
-  const [detallesAbiertos, setDetallesAbiertos] = useState({});
+  const [categoriaFiltro, setCategoriaFiltro] = useState("");
   const [rangoSemanas, setRangoSemanas] = useState("");
-    const [categoriaFiltro, setCategoriaFiltro] = useState("");
-    const [nombreRutina, setNombreRutina] = useState("");
-    const [cantidadEjercicios, setCantidadEjercicios] = useState(0);
-    const [iconos, setIconos] = useState([]);
-const [iconoSeleccionado, setIconoSeleccionado] = useState(null);
 
-// pública / privada
-const [esPublica, setEsPublica] = useState(false);
+  const [nombreRutina, setNombreRutina] = useState("");
+  const [esPublica, setEsPublica] = useState(false);
 
-    // Agrega estos estados al inicio del componente:
-const [alerta, setAlerta] = useState(""); // mensaje de alerta
-const [alertaTipo, setAlertaTipo] = useState("error"); // "success" o "error"
+  const [seleccionados, setSeleccionados] = useState([]);
+  const [alerta, setAlerta] = useState("");
+  const [alertaTipo, setAlertaTipo] = useState("error");
 
-    const usuarioData = JSON.parse(localStorage.getItem("usuario") || "{}");
-      const navigate = useNavigate(); 
+  const [loading, setLoading] = useState(true);
+  const [original, setOriginal] = useState([]);
 
+  const usuario = JSON.parse(localStorage.getItem("usuario"));
 
+  // 🔥 Necesario porque lo usas en la UI
+  const [detallesAbiertos, setDetallesAbiertos] = useState({});
+  const toggleDetalles = (id) => {
+    setDetallesAbiertos(prev => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
 
-
-  // Obtener ejercicios desde backend
+  // -----------------------------------------------------
+  // 🔥 Cargar ejercicios + iconos
+  // -----------------------------------------------------
   useEffect(() => {
-    const fetchEjercicios = async () => {
-      try {
-        const res = await fetch("http://127.0.0.1:8000/api/ejercicio/vista_basica/");
-        const data = await res.json();
+    fetch("http://127.0.0.1:8000/api/ejercicio/vista_basica/")
+      .then(res => res.json())
+      .then(setEjercicios);
 
-        // la API devuelve un array directamente
-        setEjercicios(data);
-      } catch (error) {
-        console.error("Error cargando ejercicios:", error);
-      }
-    };
-    const fetchIconos = async () => {
-    try {
-      const res = await fetch("http://127.0.0.1:8000/api/imagenes/por-proposito/", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ proposito: "rutina" })
-      });
-
-      const data = await res.json();
-      setIconos(data);
-    } catch (error) {
-      console.log("Error cargando iconos:", error);
-    }
-  };
-
-  fetchIconos();
-
-    fetchEjercicios();
-  }, []);
-
-  // Seleccionar / deseleccionar ejercicio
-  const toggleEjercicio = (ejercicio) => {
-    if (seleccionados.some(e => e.id === ejercicio.id)) {
-      setSeleccionados(seleccionados.filter(e => e.id !== ejercicio.id));
-    } else {
-      setSeleccionados([...seleccionados, ejercicio]);
-    }
-  };
-
-  // Guardar rutina
-  const guardarRutina = async () => {
-    
-
-  if (seleccionados.length < 3) {
-    alert("Debes agregar al menos 3 ejercicios para guardar la rutina.");
-    return;
-  }
-
-  if (seleccionados.length > 10) {
-    alert("No puedes agregar más de 10 ejercicios a una rutina.");
-    return;
-  }
-  // Validaciones
-    if (!nombreRutina.trim()) {
-      setAlerta("El nombre de la rutina no puede estar vacío.");
-      return;}
-
-  // ------ si pasa las validaciones, ya procede a guardar ------
-  try {
-    const response = await fetch("http://127.0.0.1:8000/api/rutina/crear-con-ejercicios/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        nombre: nombreRutina,
-        descripcion : "Rutina creada por usuario embarazada",
-        usuario: usuarioData.id,
-        sug_semanas_em: usuarioData.semana_embarazo, 
-        es_publica: esPublica,
-        icono_id: iconoSeleccionado,
-        ejercicios: seleccionados.map(e => ({
-          ejercicio: e.id,
-          series: e.series_default,
-          repeticiones: e.repeticiones_default,
-          tiempo_seg: e.tiempo_seg_default
-        }))
-      }),
-    });
-    if (!response.ok) {
-      const errorData = await response.json();
-      setAlertaTipo("error");
-      setAlerta(errorData.detail || "Ocurrió un error al crear la rutina.");
-      return;
-    }
-
-    const rutinaCreada = await response.json();
-    console.log("Rutina creada:", rutinaCreada);
-    const rutinaId = rutinaCreada.rutina_id; // asumimos que el backend devuelve el ID
-
-    // 2️⃣ Guardar automáticamente la rutina creada en RutinasGuardados
-    await fetch("http://127.0.0.1:8000/api/rutinasguardados/", {
+    fetch("http://127.0.0.1:8000/api/imagenes/por-proposito/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        usuario: usuarioData.id,
-        rutina: rutinaId
-      })
-    });
+      body: JSON.stringify({ proposito: "rutina" }),
+    })
+      .then(res => res.json())
+        .then(data => setIconos(data || []));
 
-    console.log("Rutina creada con ID:", rutinaId);
-    console.log("body mandado" , JSON.stringify({
-        usuario: usuarioData.id,
-        rutina: rutinaId
-      }))
+    }, []);
 
-    // ✅ Éxito
-    setAlertaTipo("success");
-    setAlerta("✅ Rutina creada y guardada exitosamente!");
-    // setTimeout(() => navigate("/rutinas"), 1500);
+  // -----------------------------------------------------
+  // 🔥 Cargar rutina por nombre
+  // -----------------------------------------------------
+useEffect(() => {
+  const cargarRutina = async () => {
+    try {
+      setLoading(true); // 🔥 iniciar loading
 
-  } catch (error) {
-    console.error("Error:", error);
-    setAlertaTipo("error");
-    setAlerta("Error de conexión, intenta de nuevo.");
-  }
-        
-};
+      const res = await fetch(
+        "http://127.0.0.1:8000/api/rutina/buscar-por-nombre/",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ nombre: nombreOriginal }),
+        }
+      );
 
+      const data = await res.json();
 
-  const toggleDetalles = (id) => {
-  setDetallesAbiertos(prev => ({
-    ...prev,
-    [id]: !prev[id],
+      console.log("Rutina cargada:", data); // 🔍 depuración
+
+      if (!data || !data.ejercicios) {
+        throw new Error("La API no devolvió la estructura correcta");
+      }
+
+      // Guardar info básica
+      setRutina(data);
+      setNombreRutina(data.nombre);
+      setEsPublica(data.es_publica);
+      setIconoSeleccionado(data.icono || null);
+
+      // Mapear los ejercicios seleccionados para previsualización
+      const ejerciciosAdaptados = data.ejercicios.map(e => ({
+        crear_id: e.id,                     // ID de CrearRutina (para eliminar)
+        ejercicio_id: e.ejercicio.id,       // ID del ejercicio real
+        nombre: e.ejercicio.nombre,
+        series_default: e.series ?? e.ejercicio.series_default ?? 3,
+        repeticiones_default: e.repeticiones ?? e.ejercicio.repeticiones_default ?? 10,
+        tiempo_seg_default: e.tiempo_seg ?? e.ejercicio.tiempo_seg_default ?? 0,
+      }));
+
+      console.log("Ejercicios adaptados:", ejerciciosAdaptados); // 🔍 depuración
+
+      setSeleccionados(ejerciciosAdaptados);
+        setOriginal(ejerciciosAdaptados);
+      setLoading(false); // 🔥 loading terminado
+    } catch (error) {
+      console.error("Error cargando rutina:", error);
+      setAlerta("No se pudo cargar la rutina.");
+      setAlertaTipo("error");
+      setLoading(false); // 🔥 aunque falle, dejar loading en false
+    }
+  };
+
+  cargarRutina();
+}, [slug]);
+
+const ejercicios_eliminar = original
+  .filter(o => !seleccionados.some(s => s.ejercicio_id === o.ejercicio_id))
+  .map(e => e.crear_id); // el backend quiere IDs de CrearRutina
+
+  const ejercicios_agregar = seleccionados
+  .filter(s => !original.some(o => o.ejercicio_id === s.ejercicio_id))
+  .map(e => ({
+    ejercicio_id: e.ejercicio_id ?? e.id,
+    series: e.series,
+    repeticiones: e.repeticiones,
+    tiempo_seg: e.tiempo_seg,
   }));
+
+
+  // -----------------------------------------
+  // 3) AGREGAR O QUITAR EJERCICIO
+  // -----------------------------------------
+const toggleEjercicio = (ej) => {
+  const existe = seleccionados.some(s => s.ejercicio_id === ej.id);
+
+  if (existe) {
+    // Quitar
+    setSeleccionados(seleccionados.filter(s => s.ejercicio_id !== ej.id));
+  } else {
+    // Agregar
+    setSeleccionados([
+      ...seleccionados,
+      {
+        crear_id: null,              // porque aún no existe en la BD
+        ejercicio_id: ej.id,
+        nombre: ej.nombre,
+        series: ej.series_default ?? 3,
+        repeticiones: ej.repeticiones_default ?? 10,
+        tiempo_seg: ej.tiempo_seg_default ?? 0
+      }
+    ]);
+  }
 };
 
 
+  // -----------------------------------------
+  // 4) ACTUALIZAR RUTINA
+  // -----------------------------------------
+  const actualizarRutina = async () => {
+  if (seleccionados.length < 3 || seleccionados.length > 10) {
+    setAlerta("Debes seleccionar mínimo 3 ejercicios y máximo 10.");
+    return;
+  }
+
+  try {
+    // IDs originales y nuevos
+const originalesIDs = original.map(e => e.ejercicio_id);
+const nuevosIDs = seleccionados.map(e => e.ejercicio_id);
+
+// 🔥 ELIMINADOS → los que estaban antes y ya no están ahora
+const ejercicios_eliminar = original
+  .filter(e => !nuevosIDs.includes(e.ejercicio_id))
+  .map(e => e.crear_id);
+
+// 🔥 AGREGADOS → los que no existían antes
+const ejercicios_agregar = seleccionados
+  .filter(e => !originalesIDs.includes(e.ejercicio_id))
+  .map(e => ({
+    ejercicio_id: e.ejercicio_id,
+    series: e.series,
+    repeticiones: e.repeticiones,
+    tiempo_seg: e.tiempo_seg
+  }));
+
+    // 🔥 3. Construir body final
+    const body = {
+      rutina_id: rutina.id,
+      usuario_id: usuario.id,
+      nombre: nombreRutina,
+      es_publica: esPublica,
+      icono_id: iconoSeleccionado,
+      ejercicios_eliminar,
+      ejercicios_agregar
+    };
+
+    console.log("BODY FINAL ENVIADO:", body);
+
+    // 🔥 4. Enviar al backend
+    const res = await fetch(
+      "http://127.0.0.1:8000/api/rutina/actualizar-rutina/",
+      {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      }
+    );
+
+    if (!res.ok) throw new Error();
+
+    setAlertaTipo("success");
+    setAlerta("Rutina actualizada correctamente");
+
+    setTimeout(() => navigate("/rutinas"), 1200);
+
+  } catch (err) {
+    console.error(err);
+    setAlertaTipo("error");
+    setAlerta("Error al actualizar rutina.");
+  }
+};
+
+
+  if (loading) return <p className="p-10 text-center">Cargando rutina...</p>;
+
+  // -----------------------------------------
+  // UI COMPLETA (igual que CrearRutinas)
+  // -----------------------------------------
   return (
     <main className="min-h-screen w-full overflow-x-hidden flex flex-col">
       <NavbarE />
 
       <div className="pt-24 px-6 max-w-7xl mx-auto pb-16">
-  <h1 className="text-3xl font-bold mb-6">Crear Rutina Personalizada</h1>
+        <h1 className="text-3xl font-bold mb-6">Editar Rutina</h1>
 
-  {/* 🔍 FILTROS ARRIBA — FUERA DEL GRID */}
+         {/* 🔍 FILTROS ARRIBA — FUERA DEL GRID */}
   <div className="bg-white px-4 py-4 rounded-xl shadow mb-8 grid grid-cols-1 md:grid-cols-3 gap-4">
 
     {/* Buscar */}
@@ -221,7 +288,7 @@ const [alertaTipo, setAlertaTipo] = useState("error"); // "success" o "error"
         })
         .filter(e => !categoriaFiltro || e.categoria === categoriaFiltro)
         .map((ejercicio) => {
-          const isSelected = seleccionados.some(e => e.id === ejercicio.id);
+          const isSelected = seleccionados.some(e => e.ejercicio_id === ejercicio.id);
           const isOpen = detallesAbiertos[ejercicio.id] || false;
 
           return (
@@ -244,7 +311,7 @@ const [alertaTipo, setAlertaTipo] = useState("error"); // "success" o "error"
               {/* Imagen */}
               <div className="w-full h-32 flex items-center justify-center mb-3">
                 {ejercicio.icono_url ? (
-                  <img src={`http://127.0.0.1:8000${ejercicio.icono_url}`} alt="" className="h-full object-contain" />
+                  <img src={"http://127.0.0.1:8000/"+ejercicio.icono_url} alt="" className="h-full object-contain" />
                 ) : (
                   <div className="text-gray-400">Sin imagen</div>
                 )}
@@ -381,12 +448,12 @@ const [alertaTipo, setAlertaTipo] = useState("error"); // "success" o "error"
   ) : (
     <ul className="space-y-3">
       {seleccionados.map((e) => (
-        <li key={e.id} className="p-3 border rounded-lg flex justify-between">
+        <li key={e.crear_id || e.ejercicio_id} className="p-3 border rounded-lg flex justify-between">
           <span>{e.nombre}</span>
           <button
             className="text-red-500 hover:text-red-700"
             onClick={() =>
-              setSeleccionados(seleccionados.filter(x => x.id !== e.id))
+                  setSeleccionados(seleccionados.filter(x => x.ejercicio_id !== e.ejercicio_id))
             }
           >
             Quitar
@@ -405,7 +472,8 @@ const [alertaTipo, setAlertaTipo] = useState("error"); // "success" o "error"
           return;
         }
         setAlerta("");
-        guardarRutina();
+        actualizarRutina();
+
       }}
       className={`w-full text-white py-2 rounded-lg transition ${
         seleccionados.length < 3 || seleccionados.length > 10
@@ -413,7 +481,7 @@ const [alertaTipo, setAlertaTipo] = useState("error"); // "success" o "error"
           : "bg-indigo-600 hover:bg-indigo-700"
       }`}
     >
-      Guardar rutina
+       Actualizar rutina
     </button>
 
     {/* ALERTA DE VALIDACIÓN */}
@@ -435,12 +503,24 @@ const [alertaTipo, setAlertaTipo] = useState("error"); // "success" o "error"
 
 
   </div>
-</div>
 
+
+        
+
+        {alerta && (
+          <p
+            className={`text-sm mt-2 font-semibold ${
+              alertaTipo === "success" ? "text-green-600" : "text-red-500"
+            }`}
+          >
+            {alerta}
+          </p>
+        )}
+      </div>
 
       <Footer />
     </main>
   );
 }
 
-export default CrearRutinas;
+export default EditarRutinas;

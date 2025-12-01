@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function RutinaLista() {
   const [rutinas, setRutinas] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   // Buscador
   const [busqueda, setBusqueda] = useState("");
@@ -132,7 +134,6 @@ export default function RutinaLista() {
             className="p-5 bg-white shadow rounded-xl hover:shadow-lg transition cursor-pointer border"
           >
 
-            {/* ⭐ ICONO DE LA RUTINA */}
             {r.icono_url && (
               <img
                 src={`http://127.0.0.1:8000${r.icono_url}`}
@@ -142,6 +143,12 @@ export default function RutinaLista() {
             )}
 
             <h3 className="text-xl font-bold text-center mb-2">{r.nombre}</h3>
+            {/* 🔵 CREADOR */}
+<p className="text-xs text-center mt-1 px-2 py-1 rounded-full inline-block
+    bg-purple-100 text-purple-700 font-semibold">
+  {r.creado_por ? `Creado por: ${r.creado_por}` : "Creador desconocido"}
+</p>
+
             <p className="text-gray-600 text-sm h-12 overflow-hidden text-center">{r.descripcion}</p>
 
             <div className="mt-4 text-sm">
@@ -152,7 +159,10 @@ export default function RutinaLista() {
             </div>
 
             <button
-              onClick={() => setRutinaSeleccionada(r)}
+                onClick={() =>{ const slug = r.nombre.toLowerCase().replace(/ /g, "-");
+                              navigate(`/Rutina/${slug}`);
+                            }
+                      }
               className="mt-4 w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition"
             >
               Ver detalles
