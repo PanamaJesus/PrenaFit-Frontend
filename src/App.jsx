@@ -124,7 +124,7 @@ function App() {
           }
         />
 
-        <Route path="/IdxEmb" element={<PrivateRoute role={1}><IndexAdmin2 /></PrivateRoute>} />
+       
         <Route path="/IdxAdmin" element={<IndexAdmin2/>} />
         <Route path="/IdxEmb" element={<PrivateRoute role={2}><IdxEmb /></PrivateRoute>} />
         <Route path="/Estadisticas" element={<PrivateRoute role={2}><IndexEstadisticas /></PrivateRoute>} />
