@@ -160,7 +160,7 @@ const Resenas = () => {
 
                     <td className="px-6 py-4">
                       <span className="text-sm font-semibold" style={{ color: '#722323' }}>
-                        {getEjercicioNombre(resena.ejercicio)}
+                        {getEjercicioNombre(resena.ejercicio_id)}
                       </span>
                     </td>
 
