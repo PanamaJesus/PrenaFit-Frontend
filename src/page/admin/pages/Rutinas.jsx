@@ -1,14 +1,15 @@
-// Rutinas.jsx
 import React, { useEffect, useState } from "react";
-import { Eye, Edit, Trash2, Plus, Search, X } from "lucide-react";
+import { Edit, Trash2, Plus, Search, X } from "lucide-react";
 
 const API_URL = "http://127.0.0.1:8000/api/rutina/";
 
 const Rutinas = () => {
   const [rutinas, setRutinas] = useState([]);
+  const [usuarios, setUsuarios] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [openModal, setOpenModal] = useState(false);
   const [editingRutina, setEditingRutina] = useState(null);
+  const [usuarioId, setUsuarioId] = useState(null);
 
   const [formData, setFormData] = useState({
     nombre: "",
@@ -16,7 +17,7 @@ const Rutinas = () => {
     sug_semanas_em: "",
   });
 
-  // ------------------------ GET RUTINAS ------------------------
+  // ------------------------ GET RUTINAS Y USUARIOS ------------------------
   const obtenerRutinas = async () => {
     try {
       const res = await fetch(API_URL);
@@ -27,8 +28,22 @@ const Rutinas = () => {
     }
   };
 
+  const obtenerUsuarios = async () => {
+    try {
+      const res = await fetch("http://127.0.0.1:8000/api/usuario/");
+      const data = await res.json();
+      setUsuarios(data);
+    } catch (err) {
+      console.error("Error al obtener usuarios:", err);
+    }
+  };
+
   useEffect(() => {
+    const usuario = JSON.parse(localStorage.getItem("usuario"));
+    if (usuario && usuario.id) setUsuarioId(usuario.id);
+
     obtenerRutinas();
+    obtenerUsuarios();
   }, []);
 
   // ------------------------ CREAR / EDITAR ------------------------
@@ -36,17 +51,30 @@ const Rutinas = () => {
     e.preventDefault();
     const esEdicion = Boolean(editingRutina);
 
+    if (!usuarioId) {
+      alert("No se encontró el usuario logueado.");
+      return;
+    }
+
+    const payload = {
+      ...formData,
+      usuario: usuarioId,
+      icono: null,
+    };
+
     try {
       const res = await fetch(
         esEdicion ? `${API_URL}${editingRutina.id}/` : API_URL,
         {
           method: esEdicion ? "PUT" : "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formData),
+          body: JSON.stringify(payload),
         }
       );
 
       if (!res.ok) {
+        const errorData = await res.json();
+        console.error("Error backend:", errorData);
         alert("Error al guardar la rutina");
         return;
       }
@@ -72,11 +100,19 @@ const Rutinas = () => {
     }
   };
 
-  // ------------------------ FILTRO DE BÚSQUEDA ------------------------
-  const filteredRutinas = rutinas.filter((rutina) =>
-    rutina.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    rutina.descripcion.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // ------------------------ FILTRO DE ADMIN ------------------------
+  const esAdmin = (usuarioId) => {
+    const usuario = usuarios.find(u => u.id === usuarioId);
+    return usuario ? usuario.rol === 1 : false;
+  };
+
+  const filteredRutinas = rutinas
+    .filter(rutina => esAdmin(rutina.usuario)) // solo admins
+    .filter(
+      rutina =>
+        rutina.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        rutina.descripcion.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
   // ------------------------ ABRIR MODAL ------------------------
   const abrirModalCrear = () => {
@@ -207,7 +243,6 @@ const Rutinas = () => {
 
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center gap-2">
-                        {/* EDITAR */}
                         <button
                           className="p-2 rounded-lg"
                           style={{ color: "#BA487F" }}
@@ -217,7 +252,6 @@ const Rutinas = () => {
                           <Edit size={18} />
                         </button>
 
-                        {/* ELIMINAR */}
                         <button
                           className="p-2 rounded-lg"
                           style={{ color: "#FF9587" }}
@@ -252,7 +286,7 @@ const Rutinas = () => {
         <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-xl shadow-lg p-6 w-full max-w-lg border-2"
             style={{ borderColor: "#BA487F" }}>
-            
+
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-bold" style={{ color: "#722323" }}>
                 {editingRutina ? "Editar Rutina" : "Nueva Rutina"}
