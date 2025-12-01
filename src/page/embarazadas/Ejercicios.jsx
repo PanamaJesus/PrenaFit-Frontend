@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import "../../App.css";
 import NavbarE from "./NavEmb";
-import AllEjercicios from "./AllEjercicios";
+import Footer from '../../components/Footer'
 
 function Ejercicios() {
-  // Obtener usuario desde localStorage
   const userString = localStorage.getItem("usuario");
   const user = userString ? JSON.parse(userString) : null;
   const userId = user ? user.id : null;
@@ -13,8 +13,8 @@ function Ejercicios() {
   const [loading, setLoading] = useState(true);
 
   const [semanaUsuario, setSemanaUsuario] = useState(null);
+  const [imagenes, setImagenes] = useState({});
 
-  // 1️⃣ Obtener todos los ejercicios
   useEffect(() => {
     const fetchEjercicios = async () => {
       try {
@@ -29,13 +29,9 @@ function Ejercicios() {
     fetchEjercicios();
   }, []);
 
-  // 2️⃣ Obtener datos del usuario
   useEffect(() => {
     const fetchUser = async () => {
-      if (!userId) {
-        console.log("⚠ No hay userId");
-        return;
-      }
+      if (!userId) return;
 
       try {
         const response = await fetch(
@@ -53,12 +49,35 @@ function Ejercicios() {
     fetchUser();
   }, [userId]);
 
-  // 3️⃣ Filtrar solo ejercicios del usuario
+  useEffect(() => {
+    const fetchImagenes = async () => {
+      try {
+        const nuevasImagenes = {};
+
+        for (const ej of ejercicios) {
+          if (ej.animacion && !imagenes[ej.animacion]) {
+            const res = await fetch(
+              `http://127.0.0.1:8000/api/imagenes/${ej.animacion}/`
+            );
+            const data = await res.json();
+
+            nuevasImagenes[ej.animacion] = data.url;
+          }
+        }
+
+        setImagenes((prev) => ({ ...prev, ...nuevasImagenes }));
+      } catch (error) {
+        console.error("Error al cargar imágenes:", error);
+      }
+    };
+
+    if (ejercicios.length > 0) fetchImagenes();
+  }, [ejercicios]);
+
   const ejerciciosDelUsuario = ejercicios.filter(
     (item) => String(item.usuario) === String(userId)
   );
 
-  // 4️⃣ Filtrar por rango de semanas del embarazo
   let ejerciciosPorSemana = [];
 
   if (semanaUsuario >= 1 && semanaUsuario <= 12) {
@@ -75,6 +94,29 @@ function Ejercicios() {
     );
   }
 
+  // ------------------------------------------
+  // 🔥 PAGINACIÓN
+  // ------------------------------------------
+  const [paginaActual, setPaginaActual] = useState(1);
+  const ejerciciosPorPagina = 6;
+
+  const totalPaginas = Math.ceil(
+    ejerciciosPorSemana.length / ejerciciosPorPagina
+  );
+
+  const indexUltimo = paginaActual * ejerciciosPorPagina;
+  const indexPrimero = indexUltimo - ejerciciosPorPagina;
+  const ejerciciosPaginados = ejerciciosPorSemana.slice(
+    indexPrimero,
+    indexUltimo
+  );
+
+  const cambiarPagina = (nuevaPagina) => {
+    if (nuevaPagina >= 1 && nuevaPagina <= totalPaginas) {
+      setPaginaActual(nuevaPagina);
+    }
+  };
+
   return (
     <main className="relative min-h-screen overflow-x-hidden">
       <div className="absolute -top-28 -left-28 w-[500px] h-[500px] bg-gradient-to-tr from-indigo-500/20 to-pink-500/20 rounded-full blur-[80px] -z-10"></div>
@@ -82,8 +124,24 @@ function Ejercicios() {
       <div className="overflow-hidden">
         <NavbarE />
 
-        <div className="mt-28 px-6">
-          <h1 className="text-3xl font-bold mb-6">Mis Ejercicios</h1>
+        <div className="mt-28 px-6 center">
+          <div className="flex items-center gap-8 mb-6">
+            <a
+              href="#mis-ejercicios"
+              className="text-2xl text-gray-500 font-bold relative group"
+            >
+              Mis Ejercicios
+              <span className="absolute left-0 -bottom-1 w-0 h-[3px] bg-[#F39F9F] transition-all duration-300 group-hover:w-full"></span>
+            </a>
+
+            <a
+              href="/AllEjercicios"
+              className="text-2xl text-[#A83279]  font-bold relative group"
+            >
+              Todos los ejercicios
+              <span className="absolute left-0 -bottom-1 w-0 h-[3px] bg-[#F39F9F]  transition-all duration-300 group-hover:w-full"></span>
+            </a>
+          </div>
 
           {loading && <p>Cargando ejercicios...</p>}
 
@@ -91,30 +149,101 @@ function Ejercicios() {
             <p>No tienes ejercicios disponibles para tu semana de embarazo.</p>
           )}
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {ejerciciosPorSemana.map((item) => (
-              <div
+          {/* ----------------------------------------------------
+              ⭐ GRID CON ANIMACIÓN SMOOTH (fade + slide)
+              ---------------------------------------------------- */}
+          <motion.div
+            key={paginaActual} // clave para animación al cambiar de página
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+          >
+            {ejerciciosPaginados.map((item, index) => (
+              <motion.div
                 key={item.id}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                  duration: 0.4,
+                  delay: index * 0.1, // pequeño delay para efecto cascada
+                }}
                 className="p-4 bg-white/40 backdrop-blur-lg rounded-xl shadow-md"
               >
-                <h2 className="font-semibold text-xl">{item.nombre}</h2>
+                <h2 className="text-[#F39F9F] font-semibold text-xl">
+                  {item.nombre}
+                </h2>
+
+                {imagenes[item.animacion] && (
+                  <img
+                    src={imagenes[item.animacion]}
+                    alt={item.nombre}
+                    className="w-full h-48 object-cover rounded-lg mt-3"
+                  />
+                )}
 
                 <p className="mt-2 text-sm">{item.descripcion}</p>
 
-                <p className="mt-2 text-sm">
-                  <strong>Nivel de esfuerzo:</strong> {item.nivel_esfuerzo}
-                </p>
+                <div className="flex justify-between text-sm text-gray-700">
+                  <span>
+                    <strong>Nivel:</strong> {item.nivel_esfuerzo}
+                  </span>
+                  <span>
+                    <strong>Semana:</strong> {item.sug_semanas}
+                  </span>
+                </div>
 
-                <p className="mt-1 text-sm">
-                  <strong>Sugerido desde semana:</strong> {item.sug_semanas}
-                </p>
-              </div>
+              </motion.div>
             ))}
-          </div>
-        </div>
+          </motion.div>
 
-        <AllEjercicios/>
+          {/* 🔥 PAGINACIÓN CON BOTONES */}
+          {totalPaginas > 1 && (
+            <div className="flex justify-center items-center gap-3 mt-8 flex-wrap">
+              <button
+                onClick={() => cambiarPagina(paginaActual - 1)}
+                disabled={paginaActual === 1}
+                className={`px-3 py-2 rounded-lg font-semibold ${
+                  paginaActual === 1
+                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    : "bg-[#F39F9F] text-white hover:bg-[#d57a7a]"
+                }`}
+              >
+                ←
+              </button>
+
+              {Array.from({ length: totalPaginas }, (_, i) => i + 1).map(
+                (num) => (
+                  <button
+                    key={num}
+                    onClick={() => cambiarPagina(num)}
+                    className={`px-4 py-2 rounded-lg font-semibold border ${
+                      paginaActual === num
+                        ? "bg-[#F39F9F] text-white border-[#F39F9F]"
+                        : "bg-white/40 text-[#F39F9F] border-[#F39F9F] hover:bg-[#F39F9F] hover:text-white"
+                    }`}
+                  >
+                    {num}
+                  </button>
+                )
+              )}
+
+              <button
+                onClick={() => cambiarPagina(paginaActual + 1)}
+                disabled={paginaActual === totalPaginas}
+                className={`px-3 py-2 rounded-lg font-semibold ${
+                  paginaActual === totalPaginas
+                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    : "bg-[#F39F9F] text-white hover:bg-[#d57a7a]"
+                }`}
+              >
+                →
+              </button>
+            </div>
+          )}
+        </div>
       </div>
+       <Footer />
     </main>
   );
 }

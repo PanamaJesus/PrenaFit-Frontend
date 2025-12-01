@@ -134,7 +134,7 @@ function App() {
         <Route path="/Ejercicios" element={<PrivateRoute role={2}><Ejercicios /></PrivateRoute>} />
         <Route path="/Profile" element={<PrivateRoute role={2}><Profile /></PrivateRoute>} />
         <Route path="/UpdProfile" element={<PrivateRoute role={2}><UpdateProfile  /></PrivateRoute>} />
-        {/* <Route path="/AllEjercicios" element={<PrivateRoute role={2}><AllEjercicios /></PrivateRoute>} /> */}
+        <Route path="/AllEjercicios" element={<PrivateRoute role={2}><AllEjercicios /></PrivateRoute>} />
         <Route path="/IdxEmb" element={<PrivateRoute rol={2}><IdxEmb /></PrivateRoute>} />
         <Route path="/Estadisticas" element={<PrivateRoute rol={2}><IndexEstadisticas /></PrivateRoute>} />
         <Route path="/Rutinas" element={<PrivateRoute rol={2}><IndexRutinas /></PrivateRoute>} />
