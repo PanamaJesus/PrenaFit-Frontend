@@ -7,13 +7,17 @@ const Ejercicio = () => {
   const [ejercicios, setEjercicios] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
+
+  // Estados para filtros
+  const [filtroNivel, setFiltroNivel] = useState('');
+  const [filtroSemana, setFiltroSemana] = useState('');
+
   // Estados para modales
   const [showModal, setShowModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedEjercicio, setSelectedEjercicio] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
-  
+
   // Estados del formulario
   const [formData, setFormData] = useState({
     nombre: '',
@@ -32,9 +36,7 @@ const Ejercicio = () => {
     try {
       setLoading(true);
       const response = await fetch('http://127.0.0.1:8000/api/ejercicio/');
-      
       if (!response.ok) throw new Error('Error al cargar los ejercicios');
-      
       const data = await response.json();
       setEjercicios(data);
       setError(null);
@@ -46,45 +48,63 @@ const Ejercicio = () => {
     }
   };
 
-  // CREATE
-  const handleCreate = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await fetch('http://127.0.0.1:8000/api/ejercicio/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      });
+ // CREATE
+const handleCreate = async (e) => {
+  e.preventDefault();
+  try {
+    const usuarioLogueado = JSON.parse(localStorage.getItem('usuario')); // usuario dinámico
 
-      if (!response.ok) throw new Error('Error al crear el ejercicio');
+    const payload = {
+      ...formData,
+      usuario: usuarioLogueado.id,              // 🔥 Usuario logueado
+      animacion: formData.animacion || null,    // 🔥 null si no hay animación
+      nivel_esfuerzo: parseInt(formData.nivel_esfuerzo) || 1
+    };
 
-      await fetchEjercicios();
-      closeModal();
-      alert('Ejercicio creado exitosamente');
-    } catch (err) {
-      alert('Error: ' + err.message);
-    }
-  };
+    const response = await fetch('http://127.0.0.1:8000/api/ejercicio/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
 
-  // UPDATE
-  const handleUpdate = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await fetch(`http://127.0.0.1:8000/api/ejercicio/${selectedEjercicio.id}/`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      });
+    if (!response.ok) throw new Error('Error al crear el ejercicio');
 
-      if (!response.ok) throw new Error('Error al actualizar el ejercicio');
+    await fetchEjercicios();
+    closeModal();
+    alert('Ejercicio creado exitosamente');
+  } catch (err) {
+    alert('Error: ' + err.message);
+  }
+};
 
-      await fetchEjercicios();
-      closeModal();
-      alert('Ejercicio actualizado exitosamente');
-    } catch (err) {
-      alert('Error: ' + err.message);
-    }
-  };
+// UPDATE
+const handleUpdate = async (e) => {
+  e.preventDefault();
+  try {
+    const usuarioLogueado = JSON.parse(localStorage.getItem('usuario')); // usuario dinámico
+
+    const payload = {
+      ...formData,
+      usuario: usuarioLogueado.id,
+      animacion: formData.animacion || null,
+      nivel_esfuerzo: parseInt(formData.nivel_esfuerzo) || 1
+    };
+
+    const response = await fetch(`http://127.0.0.1:8000/api/ejercicio/${selectedEjercicio.id}/`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    if (!response.ok) throw new Error('Error al actualizar el ejercicio');
+
+    await fetchEjercicios();
+    closeModal();
+    alert('Ejercicio actualizado exitosamente');
+  } catch (err) {
+    alert('Error: ' + err.message);
+  }
+};
 
   // DELETE
   const handleDelete = async () => {
@@ -171,10 +191,17 @@ const Ejercicio = () => {
     }
   };
 
-  const filteredEjercicios = ejercicios.filter(ejercicio => 
-    ejercicio.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    ejercicio.descripcion.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Filtrado con búsqueda + filtros
+  const filteredEjercicios = ejercicios.filter((ejercicio) => {
+    const matchesSearch =
+      ejercicio.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      ejercicio.descripcion.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const matchesNivel = filtroNivel ? ejercicio.nivel_esfuerzo === parseInt(filtroNivel) : true;
+    const matchesSemana = filtroSemana ? ejercicio.sug_semanas === parseInt(filtroSemana) : true;
+
+    return matchesSearch && matchesNivel && matchesSemana;
+  });
 
   return (
     <div className="p-0 m-0 min-h-full w-full" style={{ backgroundColor: '#FFFFFF' }}>
@@ -195,17 +222,44 @@ const Ejercicio = () => {
           </button>
         </div>
 
-        <div className="relative max-w-md">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2" style={{ color: '#BA487F' }} size={20} />
+        {/* Buscador y filtros */}
+        <div className="flex items-center gap-3">
+          {/* Buscador */}
+          <div className="relative flex-1 max-w-md">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2" style={{ color: '#BA487F' }} size={20} />
+            <input
+              type="text"
+              placeholder="Buscar por nombre o descripción..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-2.5 border-2 rounded-lg focus:outline-none focus:ring-2 transition-all"
+              style={{ borderColor: '#FFECCC', height: '36px' }}
+              onFocus={(e) => e.target.style.borderColor = '#BA487F'}
+              onBlur={(e) => e.target.style.borderColor = '#FFECCC'}
+            />
+          </div>
+
+          {/* Filtro Nivel de Esfuerzo */}
+          <select
+            value={filtroNivel}
+            onChange={(e) => setFiltroNivel(e.target.value)}
+            className="px-2 py-1 border-2 rounded-lg text-sm"
+            style={{ borderColor: '#FFECCC', height: '36px' }}
+          >
+            <option value="">Todos los niveles</option>
+            <option value="1">Bajo</option>
+            <option value="2">Medio</option>
+            <option value="3">Alto</option>
+          </select>
+
+          {/* Filtro Semana */}
           <input
-            type="text"
-            placeholder="Buscar por nombre o descripción..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 border-2 rounded-lg focus:outline-none focus:ring-2 transition-all"
-            style={{ borderColor: '#FFECCC' }}
-            onFocus={(e) => e.target.style.borderColor = '#BA487F'}
-            onBlur={(e) => e.target.style.borderColor = '#FFECCC'}
+            type="number"
+            placeholder="Semana"
+            value={filtroSemana}
+            onChange={(e) => setFiltroSemana(e.target.value)}
+            className="px-2 py-1 border-2 rounded-lg text-sm"
+            style={{ borderColor: '#FFECCC', height: '36px', width: '80px' }}
           />
         </div>
       </div>
