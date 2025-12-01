@@ -106,10 +106,7 @@ const Contenido = () => {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full pl-10 pr-4 py-2.5 border-2 rounded-lg focus:outline-none focus:ring-2 transition-all"
-            style={{
-              borderColor: '#FFECCC',
-              '--tw-ring-color': '#BA487F'
-            }}
+            style={{ borderColor: '#FFECCC', '--tw-ring-color': '#BA487F' }}
           />
         </div>
       </div>
@@ -121,32 +118,36 @@ const Contenido = () => {
             <table className="w-full">
               <thead style={{ backgroundColor: '#FFECCC' }}>
                 <tr>
-                  <th className="px-6 py-4">ID</th>
-                  <th className="px-6 py-4">Título</th>
-                  <th className="px-6 py-4">Texto</th>
-                  <th className="px-6 py-4">URL</th>
-                  <th className="px-6 py-4">Tema</th>
-                  <th className="px-6 py-4">Acciones</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: '#722323' }}>ID</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: '#722323' }}>Título</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: '#722323' }}>Texto</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: '#722323' }}>URL</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: '#722323' }}>Tema</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: '#722323' }}>Acciones</th>
                 </tr>
               </thead>
 
               <tbody>
                 {filteredContenidos.map((contenido) => (
-                  <tr key={contenido.id} className="border-b">
-                    <td className="px-6 py-4">#{contenido.id}</td>
+                  <tr key={contenido.id} className="border-b transition-colors" style={{ borderBottomColor: '#FFECCC' }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#FFECC0'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'white'}>
+                    <td className="px-6 py-4"><span className="text-sm font-semibold" style={{ color: '#722323' }}>#{contenido.id}</span></td>
                     <td className="px-6 py-4">{contenido.titulo}</td>
                     <td className="px-6 py-4 truncate">{contenido.texto}</td>
                     <td className="px-6 py-4">
-                      <a href={contenido.urls_img} target="_blank" className="text-sm text-blue-500 underline">
+                      <a href={contenido.urls_img} target="_blank" rel="noreferrer" className="text-sm text-blue-500 underline">
                         Ver enlace
                       </a>
                     </td>
                     <td className="px-6 py-4">
-                      {getTemaLabel(contenido.tema)}
+                      <span className="px-2 py-1 rounded-full text-xs font-semibold border" style={getTemaStyle(contenido.tema)}>
+                        {getTemaLabel(contenido.tema)}
+                      </span>
                     </td>
                     <td className="px-6 py-4">
-                      <button><Edit size={18} /></button>
-                      <button><Trash2 size={18} /></button>
+                      <div className="flex items-center gap-2">
+                        <button className="p-2 rounded-lg" style={{ color: '#BA487F' }}><Edit size={18} /></button>
+                        <button className="p-2 rounded-lg" style={{ color: '#FF9587' }}><Trash2 size={18} /></button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -159,9 +160,9 @@ const Contenido = () => {
 
       {/* MODAL PARA NUEVO CONTENIDO */}
       {modalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center p-4">
-          <div className="bg-white p-6 rounded-xl shadow-xl w-full max-w-lg">
-
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center p-4 z-50">
+          <div className="bg-white p-6 rounded-xl shadow-xl w-full max-w-lg border-2 relative" style={{ borderColor: '#BA487F' }}>
+            
             {/* Cerrar modal */}
             <button
               className="absolute top-4 right-4 text-gray-600 hover:text-black"
@@ -179,7 +180,7 @@ const Contenido = () => {
               <input
                 type="text"
                 placeholder="Título"
-                className="border p-2 rounded"
+                className="border p-2 rounded-lg"
                 value={formData.titulo}
                 onChange={(e) => setFormData({ ...formData, titulo: e.target.value })}
                 required
@@ -187,7 +188,7 @@ const Contenido = () => {
 
               <textarea
                 placeholder="Texto"
-                className="border p-2 rounded"
+                className="border p-2 rounded-lg"
                 value={formData.texto}
                 onChange={(e) => setFormData({ ...formData, texto: e.target.value })}
                 required
@@ -196,13 +197,13 @@ const Contenido = () => {
               <input
                 type="text"
                 placeholder="URL de la imagen"
-                className="border p-2 rounded"
+                className="border p-2 rounded-lg"
                 value={formData.urls_img}
                 onChange={(e) => setFormData({ ...formData, urls_img: e.target.value })}
               />
 
               <select
-                className="border p-2 rounded"
+                className="border p-2 rounded-lg"
                 value={formData.tema}
                 onChange={(e) => setFormData({ ...formData, tema: parseInt(e.target.value) })}
               >
