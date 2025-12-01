@@ -1,4 +1,4 @@
-// // UpdateProfile.jsx
+// UpdateProfile.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import NavbarE from "./NavEmb";
@@ -6,7 +6,6 @@ import NavbarE from "./NavEmb";
 function UpdateProfile() {
   const navigate = useNavigate();
 
-  // Obtener el usuario desde localStorage (CORRECTO)
   const userString = localStorage.getItem("usuario");
   const user = userString ? JSON.parse(userString) : null;
   const userId = user ? user.id : null;
@@ -15,32 +14,21 @@ function UpdateProfile() {
   const [loading, setLoading] = useState(true);
   const [msg, setMsg] = useState("");
 
-  // FUNCIÓN PARA ACTUALIZAR PERFIL (PATCH)
   const updateProfile = async (userData) => {
     try {
-      const response = await fetch(
-        `http://127.0.0.1:8000/api/usuario/${userId}/`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(userData),
-        }
-      );
+      const response = await fetch(`http://127.0.0.1:8000/api/usuario/${userId}/`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(userData),
+      });
 
-      if (!response.ok) {
-        throw new Error("Error al actualizar el usuario");
-      }
-
+      if (!response.ok) throw new Error();
       return { success: true, message: "Datos actualizados correctamente 🎉" };
-    } catch (error) {
-      console.error("Error en updateProfile:", error);
+    } catch {
       return { success: false, message: "No se pudieron guardar los cambios" };
     }
   };
 
-  // CARGAR DATOS DEL USUARIO
   useEffect(() => {
     if (!userId) {
       setMsg("No se encontró el ID del usuario.");
@@ -50,14 +38,9 @@ function UpdateProfile() {
 
     const fetchUser = async () => {
       try {
-        const response = await fetch(
-          `http://127.0.0.1:8000/api/usuario/${userId}/`
-        );
-
+        const response = await fetch(`http://127.0.0.1:8000/api/usuario/${userId}/`);
         const data = await response.json();
         setUserData(data);
-      } catch (err) {
-        console.error(err);
       } finally {
         setLoading(false);
       }
@@ -66,292 +49,136 @@ function UpdateProfile() {
     fetchUser();
   }, [userId]);
 
-  // MANEJAR SUBMIT
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const result = await updateProfile(userData);
     setMsg(result.message);
 
-    if (result.success) {
-      setTimeout(() => navigate("/profile"), 1500);
-    }
+    if (result.success) setTimeout(() => navigate("/profile"), 1500);
   };
 
-  if (loading) return <p>Cargando...</p>;
-  if (!userData) return <p>No se encontraron datos</p>;
+  if (loading) return <p className="text-center mt-10">Cargando...</p>;
+  if (!userData) return <p className="text-center mt-10">No se encontraron datos</p>;
 
   return (
+    <main className="relative min-h-screen bg-gray-100 overflow-x-hidden">
     <main className="relative min-h-screen overflow-x-hidden">
       <div className="absolute -top-28 -left-28 w-[500px] h-screen bg-gradient-to-tr from-indigo-500/20 to-pink-500/20 rounded-full blur-[80px] -z-10"></div>
       <NavbarE />
 
-      <div className="mt-28 min-h-screen flex justify-center items-center p-6">
-        <div className="max-w-lg w-full bg-white p-6 rounded-xl shadow-lg">
-          <h2 className="text-2xl font-bold mb-4 text-center text-[#A83279]">
-            Editar Perfil
-          </h2>
+      {/* Fondo superior */}
+      <div className="w-full h-64 bg-gradient-to-r from-[#BA487F] to-[#F39F9F]"></div>
 
-          {msg && <p className="text-center text-sm mb-3">{msg}</p>}
-
-          <form className="space-y-4" onSubmit={handleSubmit}>
-            <div>
-              <label className="block font-semibold">Nombre</label>
-              <input
-                type="text"
-                value={userData.nombre}
-                onChange={(e) =>
-                  setUserData({ ...userData, nombre: e.target.value })
-                }
-                className="w-full border p-2 rounded-md"
-              />
-            </div>
-
-            <div>
-              <label className="block font-semibold">Apellido Paterno</label>
-              <input
-                type="text"
-                value={userData.ap_pat}
-                onChange={(e) =>
-                  setUserData({ ...userData, ap_pat: e.target.value })
-                }
-                className="w-full border p-2 rounded-md"
-              />
-            </div>
-
-            <div>
-              <label className="block font-semibold">Apellido Materno</label>
-              <input
-                type="text"
-                value={userData.ap_mat}
-                onChange={(e) =>
-                  setUserData({ ...userData, ap_mat: e.target.value })
-                }
-                className="w-full border p-2 rounded-md"
-              />
-            </div>
-
-            <div>
-              <label className="block font-semibold">Semana de Embarazo</label>
-              <input
-                type="number"
-                value={userData.semana_embarazo}
-                onChange={(e) =>
-                  setUserData({
-                    ...userData,
-                    semana_embarazo: Number(e.target.value),
-                  })
-                }
-                className="w-full border p-2 rounded-md"
-              />
-            </div>
-
-            <div>
-              <label className="block font-semibold">Correo</label>
-              <input
-                type="email"
-                value={userData.correo}
-                onChange={(e) =>
-                  setUserData({ ...userData, correo: e.target.value })
-                }
-                className="w-full border p-2 rounded-md"
-              />
-            </div>
-
-            <button
-              type="submit"
-              className="w-full bg-[#A83279] text-white py-2 rounded-lg font-semibold hover:bg-[#8f2967]"
-            >
-              Guardar Cambios
-            </button>
-          </form>
-
-          <button
-            className="mt-4 w-full bg-gray-300 py-2 rounded-lg"
-            onClick={() => navigate("/profile")}
-          >
-            Cancelar
-          </button>
+      {/* Card principal */}
+      <div className="max-w-3xl mx-auto -mt-24 bg-white shadow-xl rounded-xl p-8 relative">
+        {/* Foto de perfil */}
+        <div className="flex justify-center">
+          <div className="relative">
+            <img
+              src="https://i.pravatar.cc/150?img=32"
+              alt="perfil"
+              className="w-32 h-32 rounded-full border-4 border-white shadow-md object-cover"
+            />
+          </div>
         </div>
+
+        {/* Nombre */}
+        <h2 className="text-2xl font-bold text-center mt-4 text-[#BA487F]">
+          Editar Perfil
+        </h2>
+
+        {/* Mensaje */}
+        {msg && <p className="text-center mt-2 text-[#BA487F] font-semibold">{msg}</p>}
+
+        {/* FORMULARIO */}
+        <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-6 mt-10 p-6 border rounded-xl shadow-sm">
+          {/* Nombre */}
+          <div>
+            <p className="font-semibold text-gray-700">Nombre:</p>
+            <input
+              type="text"
+              value={userData.nombre}
+              onChange={(e) => setUserData({ ...userData, nombre: e.target.value })}
+              className="w-full mt-1 px-4 py-2 border rounded-lg"
+            />
+          </div>
+
+          {/* Apellido Paterno */}
+          <div>
+            <p className="font-semibold text-gray-700">Apellido Paterno:</p>
+            <input
+              type="text"
+              value={userData.ap_pat}
+              onChange={(e) => setUserData({ ...userData, ap_pat: e.target.value })}
+              className="w-full mt-1 px-4 py-2 border rounded-lg"
+            />
+          </div>
+
+          {/* Apellido Materno */}
+          <div>
+            <p className="font-semibold text-gray-700">Apellido Materno:</p>
+            <input
+              type="text"
+              value={userData.ap_mat}
+              onChange={(e) => setUserData({ ...userData, ap_mat: e.target.value })}
+              className="w-full mt-1 px-4 py-2 border rounded-lg"
+            />
+          </div>
+
+          {/* Correo */}
+          <div>
+            <p className="font-semibold text-gray-700">Correo:</p>
+            <input
+              type="email"
+              value={userData.correo}
+              onChange={(e) => setUserData({ ...userData, correo: e.target.value })}
+              className="w-full mt-1 px-4 py-2 border rounded-lg"
+            />
+          </div>
+
+          {/* Fecha nacimiento */}
+          <div>
+            <p className="font-semibold text-gray-700">Fecha nacimiento:</p>
+            <input
+              type="date"
+              value={userData.fecha_nacimiento}
+              onChange={(e) => setUserData({ ...userData, fecha_nacimiento: e.target.value })}
+              className="w-full mt-1 px-4 py-2 border rounded-lg"
+            />
+          </div>
+
+          {/* Semana embarazo */}
+          <div>
+            <p className="font-semibold text-gray-700">Semanas embarazo:</p>
+            <input
+              type="number"
+              value={userData.semana_embarazo}
+              onChange={(e) => setUserData({ ...userData, semana_embarazo: e.target.value })}
+              className="w-full mt-1 px-4 py-2 border rounded-lg"
+            />
+          </div>
+        </form>
+
+        
+
+        {/* Botón Guardar */}
+        <button
+          onClick={handleSubmit}
+          className="w-full mt-8 bg-[#BA487F] hover:bg-[#a03c71] text-white py-3 rounded-lg font-semibold hover:bg-[#F39F9F] transition"
+        >
+          Guardar Cambios
+        </button>
+
+        {/* Botón Cancelar */}
+        <button
+          onClick={() => navigate("/profile")}
+          className="w-full mt-4 bg-gray-200 py-3 rounded-lg font-semibold hover:bg-gray-300"
+        >
+          Cancelar
+        </button>
       </div>
     </main>
   );
 }
 
 export default UpdateProfile;
-
-// import React, { useEffect, useState } from "react";
-// import { useNavigate } from "react-router-dom";
-// import NavbarE from "./NavEmb";
-
-// function UpdateProfile() {
-//   const navigate = useNavigate();
-
-//   //Obtener el ID guardado en sessionStorage
-//   const userId = sessionStorage.getItem("userId");
-
-//   const [userData, setUserData] = useState(null);
-//   const [loading, setLoading] = useState(true);
-//   const [msg, setMsg] = useState("");
-
-//   //FUNCIÓN PARA ACTUALIZAR PERFIL (PATCH)
-//   const updateProfile = async (userData) => {
-//     try {
-//       const response = await fetch(
-//         `http://127.0.0.1:8000/api/usuario/${userId}/`, 
-//         {
-//           method: "PATCH",
-//           headers: {
-//             "Content-Type": "application/json",
-//           },
-//           body: JSON.stringify(userData),
-//         }
-//       );
-
-//       if (!response.ok) {
-//         throw new Error("Error al actualizar el usuario");
-//       }
-
-//       return { success: true, message: "Datos actualizados correctamente 🎉" };
-//     } catch (error) {
-//       console.error("Error en updateProfile:", error);
-//       return { success: false, message: "No se pudieron guardar los cambios" };
-//     }
-//   };
-
-//   //CARGAR DATOS DEL USUARIO EXISTENTE
-//   useEffect(() => {
-//     const fetchUser = async () => {
-//       try {
-//         const response = await fetch(
-//           `http://127.0.0.1:8000/api/usuario/${userId}/`
-//         );
-//         const data = await response.json();
-//         setUserData(data);
-//       } catch (err) {
-//         console.error(err);
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-
-//     fetchUser();
-//   }, [userId]);
-
-//   // MANEJAR SUBMIT
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-
-//     const result = await updateProfile(userData);
-//     setMsg(result.message);
-
-//     if (result.success) {
-//       setTimeout(() => navigate("/profile"), 1500);
-//     }
-//   };
-
-//   if (loading) return <p>Cargando...</p>;
-//   if (!userData) return <p>No se encontraron datos</p>;
-
-//   return (
-//     <main className="relative min-h-screen overflow-x-hidden">
-//       <div className="absolute -top-28 -left-28 w-[500px] h-[500px] bg-gradient-to-tr from-indigo-500/20 to-pink-500/20 rounded-full blur-[80px] -z-10"></div>
-//       <div className="overflow-hidden">
-//         <NavbarE />
-//         <div className="mt-28">
-//           <div className="min-h-screen flex justify-center items-center p-6">
-//             <div className="max-w-lg w-full bg-white p-6 rounded-xl shadow-lg">
-//               <h2 className="text-2xl font-bold mb-4 text-center text-[#A83279]">
-//                 Editar Perfil
-//               </h2>
-
-//               {msg && <p className="text-center text-sm mb-3">{msg}</p>}
-
-//               <form className="space-y-4" onSubmit={handleSubmit}>
-//                 <div>
-//                   <label className="block font-semibold">Nombre</label>
-//                   <input
-//                     type="text"
-//                     value={userData.nombre}
-//                     onChange={(e) =>
-//                       setUserData({ ...userData, nombre: e.target.value })
-//                     }
-//                     className="w-full border p-2 rounded-md"
-//                   />
-//                 </div>
-
-//                 <div>
-//                   <label className="block font-semibold">Apellido Paterno</label>
-//                   <input
-//                     type="text"
-//                     value={userData.ap_pat}
-//                     onChange={(e) =>
-//                       setUserData({ ...userData, ap_pat: e.target.value })
-//                     }
-//                     className="w-full border p-2 rounded-md"
-//                   />
-//                 </div>
-
-//                 <div>
-//                   <label className="block font-semibold">Apellido Materno</label>
-//                   <input
-//                     type="text"
-//                     value={userData.ap_mat}
-//                     onChange={(e) =>
-//                       setUserData({ ...userData, ap_mat: e.target.value })
-//                     }
-//                     className="w-full border p-2 rounded-md"
-//                   />
-//                 </div>
-
-//                 {/*Falta validar que no pueda escribir menos semans de las que ya tiene*/}
-//                 <div>
-//                   <label className="block font-semibold">Semana de Embarazo</label>
-//                   <input
-//                     type="number"
-//                     value={userData.semana_embarazo}
-//                     onChange={(e) =>
-//                       setUserData({
-//                         ...userData,
-//                         semana_embarazo: Number(e.target.value),
-//                       })
-//                     }
-//                     className="w-full border p-2 rounded-md"
-//                   />
-//                 </div>
-
-//                 <div>
-//                   <label className="block font-semibold">Correo</label>
-//                   <input
-//                     type="email"
-//                     value={userData.correo}
-//                     onChange={(e) =>
-//                       setUserData({ ...userData, correo: e.target.value })
-//                     }
-//                     className="w-full border p-2 rounded-md"
-//                   />
-//                 </div>
-
-//                 <button
-//                   type="submit"
-//                   className="w-full bg-[#A83279] text-white py-2 rounded-lg font-semibold hover:bg-[#8f2967]"
-//                 >
-//                   Guardar Cambios
-//                 </button>
-//               </form>
-
-//               <button
-//                 className="mt-4 w-full bg-gray-300 py-2 rounded-lg"
-//                 onClick={() => navigate("/profile")}
-//               >
-//                 Cancelar
-//               </button>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-//     </main>
-//   );
-// }
-
-// export default UpdateProfile;

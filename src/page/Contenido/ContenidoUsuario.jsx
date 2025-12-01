@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import NavbarE from '../embarazadas/NavEmb'
+import NavbarE from '../embarazadas/NavEmb';
+import Footer from '../../components/Footer';
 
 function ContenidoUsuario() {
   const [contenidos, setContenidos] = useState([]);
@@ -93,6 +94,7 @@ function ContenidoUsuario() {
           </div>
         </div>
       </div>
+      <Footer/>
     </main>
   );
 }

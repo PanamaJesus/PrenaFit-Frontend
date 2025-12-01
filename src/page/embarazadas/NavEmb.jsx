@@ -38,11 +38,11 @@ const NavbarE = () => {
         >
           <motion.div 
             whileHover={{ scale: 1.1 }}
-            className="w-4 h-4 bg-blue-600 rounded-full opacity-75 hover:opacity-100 transition-opacity"
+            className="w-4 h-4 bg-[#A83279] rounded-full opacity-75 hover:opacity-100 transition-opacity"
           ></motion.div>
           <motion.div 
             whileHover={{ scale: 1.1 }}
-            className="w-4 h-4 bg-red-500 rounded-full -ml-2 hover:opacity-75 transition-opacity"
+            className="w-4 h-4 bg-[#F39F9F] rounded-full -ml-2 hover:opacity-75 transition-opacity"
           ></motion.div>
         </motion.div>
         {/* Mobile Menu Button */}
@@ -69,7 +69,7 @@ const NavbarE = () => {
               variants={fadeIn('down', 0.1 * (index + 1))}
               href={link.href}
               onClick={() => setActiveLink(link.href)}
-              className={`text-sm font-medium relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 hover:after:w-full after:bg-blue-600 after:transition-all
+              className={`text-sm font-medium relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 hover:after:w-full after:bg-[#A83279] after:transition-all
                 ${activeLink === link.href ? 'text-blue-600 after:w-full  ' : 'text-gray-600 hover:text-gray-900'}`}
             >
               {link.label}
@@ -83,7 +83,7 @@ const NavbarE = () => {
           variants={fadeIn('left', 0.3)}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className="hidden md:block bg-[#A83279] text-white px-6 py-2.5 rounded-lg hover:bg-blue-700 text-sm font-medium transition-all hover:shadow-lg hover:shadow-blue-100"
+          className="hidden md:block bg-[#A83279] text-white px-6 py-2.5 rounded-lg hover:bg-[#F39F9F] text-sm font-medium transition-all hover:shadow-lg hover:shadow-blue-100"
         >
           <a href="/Profile">Perfil</a>
         </motion.button>
@@ -92,7 +92,7 @@ const NavbarE = () => {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={handleLogout}
-          className="hidden md:block bg-red-600 text-white px-6 py-2.5 rounded-lg hover:bg-red-700 text-sm font-medium transition-all hover:shadow-lg hover:shadow-red-100 ml-3"
+          className="hidden md:block bg-[#722323] text-white px-6 py-2.5 rounded-lg hover:bg-red-700 text-sm font-medium transition-all hover:shadow-lg hover:shadow-red-100 ml-3"
         >
           Cerrar sesión
         </motion.button>

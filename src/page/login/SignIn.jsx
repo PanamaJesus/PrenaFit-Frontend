@@ -39,30 +39,31 @@ function SignInForm() {
 
       const data = await response.json();
 
-      console.log(JSON.stringify({
-          correo: correo,
-          contrasena: contrasena
-        }));
       if (!response.ok) {
         setError(data.error || "Error en el inicio de sesión");
         return;
       }
 
       const usuario = data.usuario;
-      console.log(usuario);
 
       localStorage.setItem("accessToken", data.access);
       localStorage.setItem("refreshToken", data.refresh);
 
-      // ✅ Redirección según rol
+      // 🔥 Guardar usuario SIEMPRE (antes solo guardabas para rol 2)
+      localStorage.setItem("usuario", JSON.stringify(usuario));
+
+      // 🔥 Si es admin, marcar que está logueado
       if (usuario.rol === 1) {
+        localStorage.setItem("adminLoggedIn", "true");
         navigate("/IdxAdmin");
-      } else if (usuario.rol === 2) {
-        localStorage.setItem("usuario", JSON.stringify(usuario));
+      } 
+      else if (usuario.rol === 2) {
         navigate("/IdxEmb");
-      } else {
+      } 
+      else {
         setError("Rol no reconocido");
       }
+
     } catch (error) {
       setError("Error de conexión con la API");
     }
@@ -76,22 +77,9 @@ function SignInForm() {
       >
         <h1 className="text-3xl font-bold mb-3">Sign In</h1>
 
-        {/* Mensaje de error */}
         {error && (
           <p className="text-red-500 text-sm mb-2">{error}</p>
         )}
-
-        <div className="flex justify-center space-x-3 my-4">
-          <a href="#" className="social-button flex items-center justify-center">
-            <i className="fab fa-facebook-f text-gray-600" />
-          </a>
-          <a href="#" className="social-button flex items-center justify-center">
-            <i className="fab fa-google-plus-g text-gray-600" />
-          </a>
-          <a href="#" className="social-button flex items-center justify-center">
-            <i className="fab fa-linkedin-in text-gray-600" />
-          </a>
-        </div>
 
         <span className="text-xs text-gray-600">or use your account</span>
 
@@ -99,7 +87,7 @@ function SignInForm() {
           type="email"
           name="correo"
           placeholder="Email"
-          value={state.email}
+          value={state.correo}
           onChange={handleChange}
           className="bg-gray-200 border-none px-4 py-3 my-2 w-full outline-none rounded"
         />
@@ -108,7 +96,7 @@ function SignInForm() {
           type="password"
           name="contrasena"
           placeholder="Password"
-          value={state.password}
+          value={state.contrasena}
           onChange={handleChange}
           className="bg-gray-200 border-none px-4 py-3 my-2 w-full outline-none rounded"
         />
