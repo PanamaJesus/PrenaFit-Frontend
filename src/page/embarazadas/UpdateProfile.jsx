@@ -125,11 +125,8 @@ function UpdateProfile() {
       <div className="w-full h-64 bg-gradient-to-r from-[#BA487F] to-[#F39F9F]"></div>
 
       <div className="max-w-3xl mx-auto -mt-24 bg-white shadow-xl rounded-xl p-8 relative">
-<<<<<<< HEAD
-=======
         
         {/* Foto de perfil */}
->>>>>>> 53a16513be64c8eb627441e3d2d35bfac565027f
         <div className="flex justify-center">
           <div className="relative">
             <img
@@ -147,15 +144,8 @@ function UpdateProfile() {
         {msg && <p className="text-center mt-2 text-[#BA487F] font-semibold">{msg}</p>}
 
         {/* FORMULARIO */}
-<<<<<<< HEAD
         <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-6 mt-10 p-6 border rounded-xl shadow-sm">
 
-=======
-        <form
-          onSubmit={handleSubmit}
-          className="grid grid-cols-2 gap-6 mt-10 p-6 border rounded-xl shadow-sm"
-        >
->>>>>>> 53a16513be64c8eb627441e3d2d35bfac565027f
           {/* Nombre */}
           <div>
             <p className="font-semibold">Nombre:</p>
