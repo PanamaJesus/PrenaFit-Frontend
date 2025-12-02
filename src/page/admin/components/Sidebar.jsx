@@ -8,7 +8,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
   const location = useLocation();
   
   const menuItems = [
-    { name: 'Dashboard', icon: Home, path: '/admin/dashboard' },
+    { name: 'Dashboard', icon: Home, path: '/admin/' },
     { name: 'Ejercicio', icon: Dumbbell, path: '/admin/ejercicio' },
     { name: 'Contenido', icon: FileText, path: '/admin/contenido' },
     { name: 'Tipo Tema', icon: Tag, path: '/admin/tipotema' },
