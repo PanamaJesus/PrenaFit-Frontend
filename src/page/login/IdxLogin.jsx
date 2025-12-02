@@ -33,9 +33,9 @@ export default function IdxLogin() {
             
             {/* Left Panel */}
             <div className="overlay-panel-login overlay-left">
-              <h1 className="text-4xl font-bold">Welcome Back!</h1>
+              <h1 className="text-4xl font-bold">Bienvenido de nuevo!</h1>
               <p className="text-sm mt-3">
-                To keep connected with us please login with your personal info
+                Para mantenerte conectado con nosotros, inicia sesión con tu información personal
               </p>
 
               <button
@@ -43,15 +43,15 @@ export default function IdxLogin() {
                 hover:bg-white hover:text-pink-600 transition font-bold"
                 onClick={() => handleOnClick("signIn")}
               >
-                Sign In
+                Inicia Sesión
               </button>
             </div>
 
             {/* Right Panel */}
             <div className="overlay-panel-login overlay-right">
-              <h1 className="text-4xl font-bold">Hello, Friend!</h1>
+              <h1 className="text-4xl font-bold">Hola, Amiga!</h1>
               <p className="text-sm mt-3">
-                Enter your personal details and start your journey with us
+                Ingresa tu detalles personales para empezar este camino.
               </p>
 
               <button
@@ -59,7 +59,7 @@ export default function IdxLogin() {
                 hover:bg-white hover:text-pink-600 transition font-bold"
                 onClick={() => handleOnClick("signUp")}
               >
-                Sign Up
+                Registrarse
               </button>
             </div>
 

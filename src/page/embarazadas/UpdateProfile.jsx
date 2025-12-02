@@ -62,7 +62,6 @@ function UpdateProfile() {
 
   return (
     <main className="relative min-h-screen bg-gray-100 overflow-x-hidden">
-    <main className="relative min-h-screen overflow-x-hidden">
       <div className="absolute -top-28 -left-28 w-[500px] h-screen bg-gradient-to-tr from-indigo-500/20 to-pink-500/20 rounded-full blur-[80px] -z-10"></div>
       <NavbarE />
 
@@ -88,17 +87,26 @@ function UpdateProfile() {
         </h2>
 
         {/* Mensaje */}
-        {msg && <p className="text-center mt-2 text-[#BA487F] font-semibold">{msg}</p>}
+        {msg && (
+          <p className="text-center mt-2 text-[#BA487F] font-semibold">
+            {msg}
+          </p>
+        )}
 
         {/* FORMULARIO */}
-        <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-6 mt-10 p-6 border rounded-xl shadow-sm">
+        <form
+          onSubmit={handleSubmit}
+          className="grid grid-cols-2 gap-6 mt-10 p-6 border rounded-xl shadow-sm"
+        >
           {/* Nombre */}
           <div>
             <p className="font-semibold text-gray-700">Nombre:</p>
             <input
               type="text"
               value={userData.nombre}
-              onChange={(e) => setUserData({ ...userData, nombre: e.target.value })}
+              onChange={(e) =>
+                setUserData({ ...userData, nombre: e.target.value })
+              }
               className="w-full mt-1 px-4 py-2 border rounded-lg"
             />
           </div>
@@ -109,7 +117,9 @@ function UpdateProfile() {
             <input
               type="text"
               value={userData.ap_pat}
-              onChange={(e) => setUserData({ ...userData, ap_pat: e.target.value })}
+              onChange={(e) =>
+                setUserData({ ...userData, ap_pat: e.target.value })
+              }
               className="w-full mt-1 px-4 py-2 border rounded-lg"
             />
           </div>
@@ -120,7 +130,9 @@ function UpdateProfile() {
             <input
               type="text"
               value={userData.ap_mat}
-              onChange={(e) => setUserData({ ...userData, ap_mat: e.target.value })}
+              onChange={(e) =>
+                setUserData({ ...userData, ap_mat: e.target.value })
+              }
               className="w-full mt-1 px-4 py-2 border rounded-lg"
             />
           </div>
@@ -131,7 +143,9 @@ function UpdateProfile() {
             <input
               type="email"
               value={userData.correo}
-              onChange={(e) => setUserData({ ...userData, correo: e.target.value })}
+              onChange={(e) =>
+                setUserData({ ...userData, correo: e.target.value })
+              }
               className="w-full mt-1 px-4 py-2 border rounded-lg"
             />
           </div>
@@ -142,7 +156,12 @@ function UpdateProfile() {
             <input
               type="date"
               value={userData.fecha_nacimiento}
-              onChange={(e) => setUserData({ ...userData, fecha_nacimiento: e.target.value })}
+              onChange={(e) =>
+                setUserData({
+                  ...userData,
+                  fecha_nacimiento: e.target.value,
+                })
+              }
               className="w-full mt-1 px-4 py-2 border rounded-lg"
             />
           </div>
@@ -153,18 +172,21 @@ function UpdateProfile() {
             <input
               type="number"
               value={userData.semana_embarazo}
-              onChange={(e) => setUserData({ ...userData, semana_embarazo: e.target.value })}
+              onChange={(e) =>
+                setUserData({
+                  ...userData,
+                  semana_embarazo: e.target.value,
+                })
+              }
               className="w-full mt-1 px-4 py-2 border rounded-lg"
             />
           </div>
         </form>
 
-        
-
         {/* Botón Guardar */}
         <button
           onClick={handleSubmit}
-          className="w-full mt-8 bg-[#BA487F] hover:bg-[#a03c71] text-white py-3 rounded-lg font-semibold hover:bg-[#F39F9F] transition"
+          className="w-full mt-8 bg-[#BA487F] hover:bg-[#a03c71] text-white py-3 rounded-lg font-semibold transition"
         >
           Guardar Cambios
         </button>
@@ -178,7 +200,8 @@ function UpdateProfile() {
         </button>
       </div>
     </main>
-  );
+);
+
 }
 
 export default UpdateProfile;

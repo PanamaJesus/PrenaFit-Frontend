@@ -21,6 +21,7 @@ export default function DatosRutinas() {
       })
       .then(data => {
         // Transformamos los datos si es necesario
+        console.log("Datos de rutinas:", data);
         setRutinas(data.rutinas);
         setRangos(data.rangos);
         setCargando(false);

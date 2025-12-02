@@ -117,7 +117,7 @@ export default function Profile() {
         {/* Botón editar */}
         <button
           onClick={() => navigate("/UpdProfile")}
-          className="w-full mt-8 bg-[#BA487F] hover:bg-[#a03c71] text-white py-3 rounded-lg font-semibold hover:bg-[#F39F9F] transition"
+          className="w-full mt-8 bg-[#BA487F] hover:bg-[#a03c71] text-white py-3 rounded-lg font-semibold  transition"
         >
           Editar Perfil
         </button>

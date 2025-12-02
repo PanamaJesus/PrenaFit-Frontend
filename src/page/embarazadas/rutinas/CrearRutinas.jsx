@@ -141,7 +141,7 @@ const [alertaTipo, setAlertaTipo] = useState("error"); // "success" o "error"
     // ✅ Éxito
     setAlertaTipo("success");
     setAlerta("✅ Rutina creada y guardada exitosamente!");
-    // setTimeout(() => navigate("/rutinas"), 1500);
+    setTimeout(() => navigate("/rutinas"), 1500);
 
   } catch (error) {
     console.error("Error:", error);
