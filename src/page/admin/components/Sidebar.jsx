@@ -46,7 +46,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center font-bold text-white backdrop-blur-sm">
               A
             </div>
-            <h1 className="text-xl font-bold text-white">AdminPanel</h1>
+            <h1 className="text-xl font-bold text-white">Panel Admin</h1>
           </div>
         )}
         <button 
