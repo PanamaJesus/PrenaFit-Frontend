@@ -119,11 +119,17 @@ function UpdateProfile() {
   return (
     <main className="relative min-h-screen bg-gray-100 overflow-x-hidden">
       <div className="absolute -top-28 -left-28 w-[500px] h-screen bg-gradient-to-tr from-indigo-500/20 to-pink-500/20 rounded-full blur-[80px] -z-10"></div>
+
       <NavbarE />
 
       <div className="w-full h-64 bg-gradient-to-r from-[#BA487F] to-[#F39F9F]"></div>
 
       <div className="max-w-3xl mx-auto -mt-24 bg-white shadow-xl rounded-xl p-8 relative">
+<<<<<<< HEAD
+=======
+        
+        {/* Foto de perfil */}
+>>>>>>> 53a16513be64c8eb627441e3d2d35bfac565027f
         <div className="flex justify-center">
           <div className="relative">
             <img
@@ -141,8 +147,15 @@ function UpdateProfile() {
         {msg && <p className="text-center mt-2 text-[#BA487F] font-semibold">{msg}</p>}
 
         {/* FORMULARIO */}
+<<<<<<< HEAD
         <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-6 mt-10 p-6 border rounded-xl shadow-sm">
 
+=======
+        <form
+          onSubmit={handleSubmit}
+          className="grid grid-cols-2 gap-6 mt-10 p-6 border rounded-xl shadow-sm"
+        >
+>>>>>>> 53a16513be64c8eb627441e3d2d35bfac565027f
           {/* Nombre */}
           <div>
             <p className="font-semibold">Nombre:</p>
@@ -193,7 +206,9 @@ function UpdateProfile() {
             <input
               type="date"
               value={userData.fecha_nacimiento}
-              onChange={(e) => setUserData({ ...userData, fecha_nacimiento: e.target.value })}
+              onChange={(e) =>
+                setUserData({ ...userData, fecha_nacimiento: e.target.value })
+              }
               className="w-full mt-1 px-4 py-2 border rounded-lg"
             />
           </div>
@@ -204,11 +219,14 @@ function UpdateProfile() {
             <input
               type="number"
               value={userData.semana_embarazo}
-              onChange={(e) => setUserData({ ...userData, semana_embarazo: e.target.value })}
+              onChange={(e) =>
+                setUserData({ ...userData, semana_embarazo: e.target.value })
+              }
               className="w-full mt-1 px-4 py-2 border rounded-lg"
             />
           </div>
 
+<<<<<<< HEAD
           {/* ------------------------------ */}
           {/*           RANGOS               */}
           {/* ------------------------------ */}
@@ -265,6 +283,8 @@ function UpdateProfile() {
           )}
         </form>
 
+=======
+>>>>>>> 53a16513be64c8eb627441e3d2d35bfac565027f
         {/* Botón Guardar */}
         <button
           onClick={handleSubmit}
@@ -286,6 +306,7 @@ function UpdateProfile() {
 }
 
 export default UpdateProfile;
+<<<<<<< HEAD
 
 // import React, { useEffect, useState } from "react";
 // import { useNavigate } from "react-router-dom";
@@ -469,3 +490,5 @@ export default UpdateProfile;
 // }
 
 // export default UpdateProfile;
+=======
+>>>>>>> 53a16513be64c8eb627441e3d2d35bfac565027f

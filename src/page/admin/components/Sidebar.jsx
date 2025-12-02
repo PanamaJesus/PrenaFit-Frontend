@@ -8,7 +8,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
   const location = useLocation();
   
   const menuItems = [
-    { name: 'Dashboard', icon: Home, path: '/admin/dashboard' },
+    { name: 'Dashboard', icon: Home, path: '/admin/' },
     { name: 'Ejercicio', icon: Dumbbell, path: '/admin/ejercicio' },
     { name: 'Contenido', icon: FileText, path: '/admin/contenido' },
     { name: 'Tipo Tema', icon: Tag, path: '/admin/tipotema' },
@@ -46,7 +46,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center font-bold text-white backdrop-blur-sm">
               A
             </div>
-            <h1 className="text-xl font-bold text-white">AdminPanel</h1>
+            <h1 className="text-xl font-bold text-white">Panel Admin</h1>
           </div>
         )}
         <button 
@@ -78,10 +78,6 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 
       {/* Footer con configuración y salir */}
       <div className="p-4 border-t border-white/10 space-y-2">
-        <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors text-white">
-          <Settings size={20} />
-          {isOpen && <span>Configuración</span>}
-        </button>
 
         {/* 🔥 AQUI LA ACCIÓN DEL LOGOUT */}
         <button 
