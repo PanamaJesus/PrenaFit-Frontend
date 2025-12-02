@@ -100,15 +100,6 @@ function NavbarE() {
                 Ver Info
               </button>
 
-              <button
-                onClick={() => {
-                  localStorage.removeItem("usuario");
-                  window.location.reload();
-                }}
-                className="w-full text-left p-2 hover:bg-red-100 text-red-600 rounded"
-              >
-                Cerrar Sesión
-              </button>
             </div>
           )}
         </div>
