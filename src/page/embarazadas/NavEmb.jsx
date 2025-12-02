@@ -11,7 +11,7 @@ const NavbarE = () => {
     { href: "/IdxEmb", label: "Inicio" },
     { href: "/Estadisticas", label: "Signos vitales" },
     { href: "/Rutinas", label: "Rutinas" },
-    { href: "/Ejercicios", label: "Ejercicios" },
+    { href: "/AllEjercicios", label: "Ejercicios" },
     { href: "/TiposContenido", label: "Contenido Educativo" },
   ]
 

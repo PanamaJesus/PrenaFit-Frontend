@@ -13,6 +13,7 @@ export default function AllEjercicios() {
   const [query, setQuery] = useState("");
   const [selectedSemana, setSelectedSemana] = useState("all");
   const [selectedNivel, setSelectedNivel] = useState("all");
+  const [selectedCategoria, setSelectedCategoria] = useState("all");
 
   // paginación
   const [paginaActual, setPaginaActual] = useState(1);
@@ -59,27 +60,42 @@ export default function AllEjercicios() {
   }, [ejercicios]);
 
   // Filtros
-  const ejerciciosFiltrados = useMemo(() => {
-    return ejercicios.filter((item) => {
-      if (query.trim()) {
-        const q = query.toLowerCase();
-        if (!String(item.nombre).toLowerCase().includes(q)) return false;
+  const categorias = useMemo(() => {
+    const setCat = new Set();
+    ejercicios.forEach(e => {
+      if (e.categoria && e.categoria.trim() !== "") {
+        setCat.add(e.categoria);
       }
-
-      if (selectedSemana !== "all") {
-        const s = Number(item.sug_semanas);
-        if (selectedSemana === "1-12" && !(s >= 1 && s <= 12)) return false;
-        if (selectedSemana === "13-27" && !(s >= 13 && s <= 27)) return false;
-        if (selectedSemana === "28-40" && !(s >= 28 && s <= 40)) return false;
-      }
-
-      if (selectedNivel !== "all") {
-        if (Number(item.nivel_esfuerzo) !== Number(selectedNivel)) return false;
-      }
-
-      return true;
     });
-  }, [ejercicios, query, selectedSemana, selectedNivel]);
+    return Array.from(setCat);
+  }, [ejercicios]);
+
+  const ejerciciosFiltrados = useMemo(() => {
+  return ejercicios.filter((item) => {
+    if (query.trim()) {
+      const q = query.toLowerCase();
+      if (!String(item.nombre).toLowerCase().includes(q)) return false;
+    }
+
+    if (selectedSemana !== "all") {
+      const s = Number(item.sug_semanas);
+      if (selectedSemana === "1-12" && !(s >= 1 && s <= 12)) return false;
+      if (selectedSemana === "13-27" && !(s >= 13 && s <= 27)) return false;
+      if (selectedSemana === "28-40" && !(s >= 28 && s <= 40)) return false;
+    }
+
+    if (selectedNivel !== "all") {
+      if (Number(item.nivel_esfuerzo) !== Number(selectedNivel)) return false;
+    }
+
+    // ⭐ Filtro por categoría
+    if (selectedCategoria !== "all") {
+      if (item.categoria !== selectedCategoria) return false;
+    }
+
+    return true;
+  });
+}, [ejercicios, query, selectedSemana, selectedNivel, selectedCategoria]);
 
   // PAGINACIÓN
   const totalPaginas = Math.ceil(ejerciciosFiltrados.length / ejerciciosPorPagina);
@@ -116,13 +132,13 @@ export default function AllEjercicios() {
       <div className="mt-28 px-6">
         {/* enlaces arriba */}
         <div className="flex items-center gap-8 mb-6">
-          <a
+          {/* <a
             href="/Ejercicios"
             className="text-2xl text-[#A83279] font-bold relative group"
           >
             Mis Ejercicios
             <span className="absolute left-0 -bottom-1 w-0 h-[3px] bg-[#F39F9F] transition-all duration-300 group-hover:w-full"></span>
-          </a>
+          </a> */}
 
           <a
             href="/AllEjercicios"
@@ -165,11 +181,26 @@ export default function AllEjercicios() {
             <option value="3">3 - Alto</option>
           </select>
 
+          <select
+            value={selectedCategoria}
+            onChange={(e) => setSelectedCategoria(e.target.value)}
+            className="px-3 py-2 border rounded-lg"
+          >
+            <option value="all">Filtrar por categoría</option>
+
+            {categorias.map((cat, index) => (
+              <option key={index} value={cat}>
+                {cat}
+              </option>
+            ))}
+          </select>
+
           <button
             onClick={() => {
               setQuery("");
               setSelectedSemana("all");
               setSelectedNivel("all");
+              setSelectedCategoria("all");
             }}
             className="ml-auto px-4 py-2 bg-gray-100 rounded-lg"
           >
