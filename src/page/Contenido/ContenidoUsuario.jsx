@@ -44,13 +44,14 @@ function ContenidoUsuario() {
         <div className="mt-28 px-6">
           <h1 className="text-2xl font-bold mb-4">Contenido educativo</h1>
 
-          {/* Filtros */}
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
+          {/* Filtros con estilo unificado */}
+          <div className="bg-white p-4 rounded-xl shadow-md mb-6 flex flex-col sm:flex-row gap-3 items-center">
+            
             {/* Selector de categoría */}
             <select
               value={categoria}
               onChange={(e) => setCategoria(e.target.value)}
-              className="border rounded px-3 py-2"
+              className="px-3 py-2 border rounded-lg"
             >
               <option>Todos</option>
               {tipos.map((t) => (
@@ -64,10 +65,21 @@ function ContenidoUsuario() {
               placeholder="Buscar..."
               value={busqueda}
               onChange={(e) => setBusqueda(e.target.value)}
-              className="border rounded px-3 py-2 flex-1"
+              className="flex-1 px-4 py-2 border rounded-lg focus:outline-none"
             />
-          </div>
 
+            {/* Botón limpiar (opcional) */}
+            <button
+              onClick={() => {
+                setCategoria("Todos");
+                setBusqueda("");
+              }}
+              className="ml-auto px-4 py-2 bg-gray-100 rounded-lg"
+            >
+              Limpiar
+            </button>
+          </div>
+          
           {/* Grid de contenidos */}
           <div className="grid md:grid-cols-3 gap-4">
             {filtrados.map((item) => (

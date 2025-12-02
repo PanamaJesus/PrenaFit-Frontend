@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import NavbarE from "./NavEmb";
 import Footer from '../../components/Footer'
+import Ejercicio_Idx from '../../assets/fit4.jpg'
 
 export default function AllEjercicios() {
   const [ejercicios, setEjercicios] = useState([]);
@@ -93,10 +94,24 @@ export default function AllEjercicios() {
   };
 
   return (
-    <main className="relative min-h-screen overflow-x-hidden p-6">
+    <main className="relative min-h-screen overflow-x-hidden">
       <div className="absolute -top-28 -left-28 w-[500px] h-[500px] bg-gradient-to-tr from-indigo-500/20 to-pink-500/20 rounded-full blur-[80px] -z-10"></div>
 
       <NavbarE />
+
+      {/* Fondo superior con imagen */}
+      <div
+        className="mt-20 w-full h-60 bg-cover bg-center relative"
+        style={{ backgroundImage: `url(${Ejercicio_Idx})` }}
+      >
+        {/* Capa oscura para que se lea el texto */}
+        <div className="absolute inset-0 bg-black/30"></div>
+
+        {/* Frase motivadora */}
+        <h2 className="absolute inset-0 flex items-center justify-center text-white text-3xl font-bold drop-shadow-lg px-4 text-center">
+          ¡Cada paso cuenta, y tú puedes lograrlo!
+        </h2>
+      </div>
 
       <div className="mt-28 px-6">
         {/* enlaces arriba */}
