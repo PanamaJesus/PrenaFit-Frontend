@@ -78,10 +78,6 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 
       {/* Footer con configuración y salir */}
       <div className="p-4 border-t border-white/10 space-y-2">
-        <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition-colors text-white">
-          <Settings size={20} />
-          {isOpen && <span>Configuración</span>}
-        </button>
 
         {/* 🔥 AQUI LA ACCIÓN DEL LOGOUT */}
         <button 
