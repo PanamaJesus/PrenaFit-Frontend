@@ -216,7 +216,6 @@ function UpdateProfile() {
             />
           </div>
 
-<<<<<<< HEAD
           {/* ------------------------------ */}
           {/*           RANGOS               */}
           {/* ------------------------------ */}
@@ -273,8 +272,6 @@ function UpdateProfile() {
           )}
         </form>
 
-=======
->>>>>>> 53a16513be64c8eb627441e3d2d35bfac565027f
         {/* Botón Guardar */}
         <button
           onClick={handleSubmit}
@@ -296,7 +293,6 @@ function UpdateProfile() {
 }
 
 export default UpdateProfile;
-<<<<<<< HEAD
 
 // import React, { useEffect, useState } from "react";
 // import { useNavigate } from "react-router-dom";
@@ -480,5 +476,3 @@ export default UpdateProfile;
 // }
 
 // export default UpdateProfile;
-=======
->>>>>>> 53a16513be64c8eb627441e3d2d35bfac565027f
