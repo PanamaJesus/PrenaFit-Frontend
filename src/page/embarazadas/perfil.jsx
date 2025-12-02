@@ -39,7 +39,9 @@ export default function Profile() {
   if (!usuario) return <p className="text-center mt-4">Cargando...</p>;
 
   return (
-    <main className="relative min-h-screen bg-gray-100 overflow-x-hidden">
+    <main className="relative min-h-screen overflow-x-hidden">
+      {/* Fondo con blur */}
+      <div className="absolute -top-28 -left-28 w-[500px] h-screen bg-gradient-to-tr from-indigo-500/20 to-pink-500/20 rounded-full blur-[80px] -z-10"></div>
       <NavbarE />
 
       {/* Fondo superior */}

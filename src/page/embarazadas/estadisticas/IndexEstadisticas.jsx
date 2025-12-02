@@ -8,34 +8,6 @@ import HistogramaRutinas from "../../../components/charts/HistogramaRutinas";
 import { div } from "framer-motion/client";
 
 function IndexEstadisticas() {
-  const lecturasMock = [
-  { fecha: "2025-01-01", oxigenacion: 96, frecuencia: 85, temperatura: 36.7 },
-  { fecha: "2025-01-02", oxigenacion: 92, frecuencia: 90, temperatura: 37.0 },
-  { fecha: "2025-01-02", oxigenacion: 94, frecuencia: 88, temperatura: 36.8 },
-  { fecha: "2025-01-05", oxigenacion: 97, frecuencia: 82, temperatura: 36.5 },
-  { fecha: "2025-01-10", oxigenacion: 89, frecuencia: 95, temperatura: 37.8 },
-  { fecha: "2025-01-11", oxigenacion: 89, frecuencia: 95, temperatura: 37.8 },
-
-  { fecha: "2025-02-03", oxigenacion: 95, frecuencia: 87, temperatura: 36.6 },
-  { fecha: "2025-02-03", oxigenacion: 95, frecuencia: 87, temperatura: 36.6 },
-
-  { fecha: "2025-02-03", oxigenacion: 95, frecuencia: 87, temperatura: 36.6 },
-
-  { fecha: "2025-02-03", oxigenacion: 95, frecuencia: 87, temperatura: 36.6 },
-  { fecha: "2025-02-03", oxigenacion: 95, frecuencia: 87, temperatura: 36.6 },
-  { fecha: "2025-02-03", oxigenacion: 95, frecuencia: 87, temperatura: 36.6 },
-  { fecha: "2025-02-03", oxigenacion: 95, frecuencia: 87, temperatura: 36.6 },
-
-  { fecha: "2025-02-03", oxigenacion: 95, frecuencia: 87, temperatura: 36.6 },
-  { fecha: "2025-02-03", oxigenacion: 95, frecuencia: 87, temperatura: 36.6 },
-  { fecha: "2025-02-03", oxigenacion: 95, frecuencia: 87, temperatura: 36.6 },
-  { fecha: "2025-02-03", oxigenacion: 95, frecuencia: 87, temperatura: 36.6 },
-  { fecha: "2025-02-03", oxigenacion: 95, frecuencia: 87, temperatura: 36.6 },
-  { fecha: "2025-02-03", oxigenacion: 95, frecuencia: 87, temperatura: 36.6 },
-
-  { fecha: "2025-02-03", oxigenacion: 95, frecuencia: 87, temperatura: 36.6 },
-
-];
 
   return (
     <div>
@@ -73,7 +45,8 @@ function IndexEstadisticas() {
 
       </div>
 
-     
+      <div className="absolute -top-28 -left-28 w-[500px] h-screen bg-gradient-to-tr from-indigo-500/20 to-pink-500/20 rounded-full blur-[80px] -z-10">
+      </div>
     </main>
       <Footer />
     </div>

@@ -23,6 +23,10 @@ import './index.css' // <== IMPORTANTE
 import IdxLogin from "./page/login/IdxLogin";
 import './App.css';
 import './index.css';
+import DetallesRutina from "./page/embarazadas/rutinas/DetallesRutina.jsx";
+import CrearRutinas from "./page/embarazadas/rutinas/CrearRutinas.jsx";
+import AdministrarRutinas from "./page/embarazadas/rutinas/AdministrarRutinas.jsx";
+import EditarRutinas from "./page/embarazadas/rutinas/EditarRutinas.jsx";
 
 const PublicRoute = ({ children }) => {
   const userString = localStorage.getItem("usuario");
@@ -138,6 +142,10 @@ function App() {
         <Route path="/IdxEmb" element={<PrivateRoute rol={2}><IdxEmb /></PrivateRoute>} />
         <Route path="/Estadisticas" element={<PrivateRoute rol={2}><IndexEstadisticas /></PrivateRoute>} />
         <Route path="/Rutinas" element={<PrivateRoute rol={2}><IndexRutinas /></PrivateRoute>} />
+        <Route path="/Rutina/:slug" element={<PrivateRoute rol={2}><DetallesRutina /></PrivateRoute>}/>
+        <Route path="/Crear-rutina" element={<PrivateRoute rol={2}><CrearRutinas /></PrivateRoute>} />
+        <Route path="/Administrar-rutinas" element={<PrivateRoute rol={2}><AdministrarRutinas /></PrivateRoute>} />
+        <Route path="/Editar-Rutina/:slug" element={<PrivateRoute rol={2}><EditarRutinas /></PrivateRoute>} />
 
         
 
