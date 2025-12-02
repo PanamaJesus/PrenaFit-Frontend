@@ -62,8 +62,8 @@ function UpdateProfile() {
 
   return (
     <main className="relative min-h-screen bg-gray-100 overflow-x-hidden">
-    <main className="relative min-h-screen overflow-x-hidden">
       <div className="absolute -top-28 -left-28 w-[500px] h-screen bg-gradient-to-tr from-indigo-500/20 to-pink-500/20 rounded-full blur-[80px] -z-10"></div>
+
       <NavbarE />
 
       {/* Fondo superior */}
@@ -71,6 +71,7 @@ function UpdateProfile() {
 
       {/* Card principal */}
       <div className="max-w-3xl mx-auto -mt-24 bg-white shadow-xl rounded-xl p-8 relative">
+        
         {/* Foto de perfil */}
         <div className="flex justify-center">
           <div className="relative">
@@ -91,7 +92,10 @@ function UpdateProfile() {
         {msg && <p className="text-center mt-2 text-[#BA487F] font-semibold">{msg}</p>}
 
         {/* FORMULARIO */}
-        <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-6 mt-10 p-6 border rounded-xl shadow-sm">
+        <form
+          onSubmit={handleSubmit}
+          className="grid grid-cols-2 gap-6 mt-10 p-6 border rounded-xl shadow-sm"
+        >
           {/* Nombre */}
           <div>
             <p className="font-semibold text-gray-700">Nombre:</p>
@@ -142,7 +146,9 @@ function UpdateProfile() {
             <input
               type="date"
               value={userData.fecha_nacimiento}
-              onChange={(e) => setUserData({ ...userData, fecha_nacimiento: e.target.value })}
+              onChange={(e) =>
+                setUserData({ ...userData, fecha_nacimiento: e.target.value })
+              }
               className="w-full mt-1 px-4 py-2 border rounded-lg"
             />
           </div>
@@ -153,13 +159,13 @@ function UpdateProfile() {
             <input
               type="number"
               value={userData.semana_embarazo}
-              onChange={(e) => setUserData({ ...userData, semana_embarazo: e.target.value })}
+              onChange={(e) =>
+                setUserData({ ...userData, semana_embarazo: e.target.value })
+              }
               className="w-full mt-1 px-4 py-2 border rounded-lg"
             />
           </div>
         </form>
-
-        
 
         {/* Botón Guardar */}
         <button
