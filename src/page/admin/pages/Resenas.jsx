@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Eye, Edit, Trash2, Plus, Search } from 'lucide-react';
+import { Trash2, Search, X } from 'lucide-react';
 
 const Resenas = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [resenas, setResenas] = useState([]);
   const [usuarios, setUsuarios] = useState([]);
   const [ejercicios, setEjercicios] = useState([]);
+
+  // Modal eliminar
+  const [modalDelete, setModalDelete] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
 
   // Cargar datos
   const fetchTodo = async () => {
@@ -14,14 +18,9 @@ const Resenas = () => {
       const u = await fetch("http://127.0.0.1:8000/api/usuario/");
       const e = await fetch("http://127.0.0.1:8000/api/ejercicio/");
 
-      const resenasData = await r.json();
-      const usuariosData = await u.json();
-      const ejerciciosData = await e.json();
-
-      setResenas(resenasData);
-      setUsuarios(usuariosData);
-      setEjercicios(ejerciciosData);
-
+      setResenas(await r.json());
+      setUsuarios(await u.json());
+      setEjercicios(await e.json());
     } catch (err) {
       console.error("Error cargando datos:", err);
     }
@@ -42,17 +41,21 @@ const Resenas = () => {
     return e ? e.nombre || `Ejercicio #${id}` : `Ejercicio #${id}`;
   };
 
-  // eliminar reseña
-  const eliminarResena = async (id) => {
-    if (!window.confirm("¿Seguro que deseas eliminar esta reseña?")) return;
+  // Confirmar delete y abrir modal
+  const openDeleteModal = (id) => {
+    setSelectedId(id);
+    setModalDelete(true);
+  };
 
+  // eliminar reseña
+  const eliminarResena = async () => {
     try {
-      await fetch(`http://127.0.0.1:8000/api/resena/${id}/`, {
+      await fetch(`http://127.0.0.1:8000/api/resena/${selectedId}/`, {
         method: "DELETE"
       });
 
+      setModalDelete(false);
       fetchTodo();
-
     } catch (err) {
       console.error("Error eliminando:", err);
     }
@@ -104,8 +107,6 @@ const Resenas = () => {
               borderColor: '#FFECCC',
               '--tw-ring-color': '#BA487F'
             }}
-            onFocus={(e) => e.target.style.borderColor = '#BA487F'}
-            onBlur={(e) => e.target.style.borderColor = '#FFECCC'}
           />
         </div>
       </div>
@@ -131,8 +132,6 @@ const Resenas = () => {
                   <tr key={resena.id}
                     className="border-b transition-colors"
                     style={{ borderBottomColor: '#FFECCC' }}
-                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#FFECC0'}
-                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'white'}
                   >
                     <td className="px-6 py-4">
                       <span className="text-sm font-semibold" style={{ color: '#722323' }}>
@@ -166,18 +165,14 @@ const Resenas = () => {
 
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center gap-2">
-
                         <button 
                           className="p-2 rounded-lg"
                           style={{ color: '#FF9587' }}
-                          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#F39F9F'}
-                          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                          onClick={() => openDeleteModal(resena.id)}
                           title="Eliminar"
-                          onClick={() => eliminarResena(resena.id)}
                         >
                           <Trash2 size={18} />
                         </button>
-
                       </div>
                     </td>
                   </tr>
@@ -195,6 +190,48 @@ const Resenas = () => {
           </div>
         </div>
       </div>
+
+      {/* MODAL ELIMINAR */}
+      {modalDelete && (
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center p-4 z-50">
+          <div className="bg-white p-6 rounded-xl shadow-xl max-w-sm w-full border-2 relative"
+            style={{ borderColor: "#BA487F" }}
+          >
+            <button className="absolute top-4 right-4" onClick={() => setModalDelete(false)}>
+              <X size={22} />
+            </button>
+
+            <h2 className="text-xl font-bold mb-3" style={{ color: "#722323" }}>
+              ¿Eliminar reseña?
+            </h2>
+
+            <p className="mb-6">
+              Esta acción no se puede deshacer.
+            </p>
+
+            <div className="flex justify-end gap-3">
+              <button
+                className="px-4 py-2 rounded-lg"
+                onClick={() => setModalDelete(false)}
+                style={{ backgroundColor: "#FFECCC" }}
+              >
+                Cancelar
+              </button>
+
+              <button
+                className="px-4 py-2 text-white rounded-lg"
+                onClick={eliminarResena}
+                style={{
+                  background: "linear-gradient(135deg, #722323 0%, #BA487F 100%)",
+                }}
+              >
+                Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };

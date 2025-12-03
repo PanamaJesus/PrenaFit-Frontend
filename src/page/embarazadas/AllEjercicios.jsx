@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import NavbarE from "./NavEmb";
 import Footer from '../../components/Footer'
+import Ejercicio_Idx from '../../assets/fit4.jpg'
 
 export default function AllEjercicios() {
   const [ejercicios, setEjercicios] = useState([]);
@@ -12,6 +13,7 @@ export default function AllEjercicios() {
   const [query, setQuery] = useState("");
   const [selectedSemana, setSelectedSemana] = useState("all");
   const [selectedNivel, setSelectedNivel] = useState("all");
+  const [selectedCategoria, setSelectedCategoria] = useState("all");
 
   // paginación
   const [paginaActual, setPaginaActual] = useState(1);
@@ -58,27 +60,42 @@ export default function AllEjercicios() {
   }, [ejercicios]);
 
   // Filtros
-  const ejerciciosFiltrados = useMemo(() => {
-    return ejercicios.filter((item) => {
-      if (query.trim()) {
-        const q = query.toLowerCase();
-        if (!String(item.nombre).toLowerCase().includes(q)) return false;
+  const categorias = useMemo(() => {
+    const setCat = new Set();
+    ejercicios.forEach(e => {
+      if (e.categoria && e.categoria.trim() !== "") {
+        setCat.add(e.categoria);
       }
-
-      if (selectedSemana !== "all") {
-        const s = Number(item.sug_semanas);
-        if (selectedSemana === "1-12" && !(s >= 1 && s <= 12)) return false;
-        if (selectedSemana === "13-27" && !(s >= 13 && s <= 27)) return false;
-        if (selectedSemana === "28-40" && !(s >= 28 && s <= 40)) return false;
-      }
-
-      if (selectedNivel !== "all") {
-        if (Number(item.nivel_esfuerzo) !== Number(selectedNivel)) return false;
-      }
-
-      return true;
     });
-  }, [ejercicios, query, selectedSemana, selectedNivel]);
+    return Array.from(setCat);
+  }, [ejercicios]);
+
+  const ejerciciosFiltrados = useMemo(() => {
+  return ejercicios.filter((item) => {
+    if (query.trim()) {
+      const q = query.toLowerCase();
+      if (!String(item.nombre).toLowerCase().includes(q)) return false;
+    }
+
+    if (selectedSemana !== "all") {
+      const s = Number(item.sug_semanas);
+      if (selectedSemana === "1-12" && !(s >= 1 && s <= 12)) return false;
+      if (selectedSemana === "13-27" && !(s >= 13 && s <= 27)) return false;
+      if (selectedSemana === "28-40" && !(s >= 28 && s <= 40)) return false;
+    }
+
+    if (selectedNivel !== "all") {
+      if (Number(item.nivel_esfuerzo) !== Number(selectedNivel)) return false;
+    }
+
+    // ⭐ Filtro por categoría
+    if (selectedCategoria !== "all") {
+      if (item.categoria !== selectedCategoria) return false;
+    }
+
+    return true;
+  });
+}, [ejercicios, query, selectedSemana, selectedNivel, selectedCategoria]);
 
   // PAGINACIÓN
   const totalPaginas = Math.ceil(ejerciciosFiltrados.length / ejerciciosPorPagina);
@@ -93,21 +110,35 @@ export default function AllEjercicios() {
   };
 
   return (
-    <main className="relative min-h-screen overflow-x-hidden p-6">
+    <main className="relative min-h-screen overflow-x-hidden">
       <div className="absolute -top-28 -left-28 w-[500px] h-[500px] bg-gradient-to-tr from-indigo-500/20 to-pink-500/20 rounded-full blur-[80px] -z-10"></div>
 
       <NavbarE />
 
+      {/* Fondo superior con imagen */}
+      <div
+        className="mt-20 w-full h-60 bg-cover bg-center relative"
+        style={{ backgroundImage: `url(${Ejercicio_Idx})` }}
+      >
+        {/* Capa oscura para que se lea el texto */}
+        <div className="absolute inset-0 bg-black/30"></div>
+
+        {/* Frase motivadora */}
+        <h2 className="absolute inset-0 flex items-center justify-center text-white text-3xl font-bold drop-shadow-lg px-4 text-center">
+          ¡Cada paso cuenta, y tú puedes lograrlo!
+        </h2>
+      </div>
+
       <div className="mt-28 px-6">
         {/* enlaces arriba */}
         <div className="flex items-center gap-8 mb-6">
-          <a
+          {/* <a
             href="/Ejercicios"
             className="text-2xl text-[#A83279] font-bold relative group"
           >
             Mis Ejercicios
             <span className="absolute left-0 -bottom-1 w-0 h-[3px] bg-[#F39F9F] transition-all duration-300 group-hover:w-full"></span>
-          </a>
+          </a> */}
 
           <a
             href="/AllEjercicios"
@@ -150,11 +181,26 @@ export default function AllEjercicios() {
             <option value="3">3 - Alto</option>
           </select>
 
+          <select
+            value={selectedCategoria}
+            onChange={(e) => setSelectedCategoria(e.target.value)}
+            className="px-3 py-2 border rounded-lg"
+          >
+            <option value="all">Filtrar por categoría</option>
+
+            {categorias.map((cat, index) => (
+              <option key={index} value={cat}>
+                {cat}
+              </option>
+            ))}
+          </select>
+
           <button
             onClick={() => {
               setQuery("");
               setSelectedSemana("all");
               setSelectedNivel("all");
+              setSelectedCategoria("all");
             }}
             className="ml-auto px-4 py-2 bg-gray-100 rounded-lg"
           >

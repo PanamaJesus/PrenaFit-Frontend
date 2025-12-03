@@ -2,12 +2,16 @@ import React, { useEffect, useState } from "react";
 import { Edit, Trash2, Plus, Search, X } from "lucide-react";
 
 const API_URL = "http://127.0.0.1:8000/api/rutina/";
+const API_EJERCICIOS = "http://127.0.0.1:8000/api/ejercicio/";
+const API_RUTINA_EJERCICIO = "http://127.0.0.1:8000/api/rutinaejercicio/";
 
 const Rutinas = () => {
   const [rutinas, setRutinas] = useState([]);
   const [usuarios, setUsuarios] = useState([]);
+  const [ejercicios, setEjercicios] = useState([]);
+  const [selectedEjercicios, setSelectedEjercicios] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filtroSemana, setFiltroSemana] = useState(""); // filtro por semana
+  const [filtroSemana, setFiltroSemana] = useState("");
   const [openModal, setOpenModal] = useState(false);
   const [editingRutina, setEditingRutina] = useState(null);
   const [usuarioId, setUsuarioId] = useState(null);
@@ -20,7 +24,7 @@ const Rutinas = () => {
 
   const semanasDisponibles = Array.from({ length: 40 }, (_, i) => i + 1);
 
-  // ------------------------ GET RUTINAS Y USUARIOS ------------------------
+  // ------------------------ GET DATA ------------------------
   const obtenerRutinas = async () => {
     try {
       const res = await fetch(API_URL);
@@ -41,12 +45,42 @@ const Rutinas = () => {
     }
   };
 
+  const obtenerEjercicios = async () => {
+    try {
+      const res = await fetch(API_EJERCICIOS);
+      const data = await res.json();
+      setEjercicios(data);
+    } catch (error) {
+      console.error("Error al obtener ejercicios:", error);
+    }
+  };
+
+  // ------------------------ CARGAR EJERCICIOS DE RUTINA ------------------------
+  const obtenerEjerciciosRutina = async (rutinaId) => {
+    try {
+      const res = await fetch(API_RUTINA_EJERCICIO);
+      const data = await res.json();
+      const ejerciciosRutina = data
+        .filter((re) => re.rutina === rutinaId)
+        .map((re) => ({
+          ejercicioId: re.ejercicio,
+          series: re.series,
+          repeticiones: re.repeticiones,
+          tiempo_seg: re.tiempo_seg,
+        }));
+      setSelectedEjercicios(ejerciciosRutina);
+    } catch (err) {
+      console.error("Error al obtener ejercicios de la rutina:", err);
+    }
+  };
+
   useEffect(() => {
     const usuario = JSON.parse(localStorage.getItem("usuario"));
     if (usuario && usuario.id) setUsuarioId(usuario.id);
 
     obtenerRutinas();
     obtenerUsuarios();
+    obtenerEjercicios();
   }, []);
 
   // ------------------------ CREAR / EDITAR ------------------------
@@ -59,11 +93,7 @@ const Rutinas = () => {
       return;
     }
 
-    const payload = {
-      ...formData,
-      usuario: usuarioId,
-      icono: null,
-    };
+    const payload = { ...formData, usuario: usuarioId, icono: null };
 
     try {
       const res = await fetch(
@@ -82,9 +112,27 @@ const Rutinas = () => {
         return;
       }
 
+      const rutinaCreada = await res.json();
+
+      // ------------------------ AGREGAR EJERCICIOS ------------------------
+      for (const sel of selectedEjercicios) {
+        await fetch(API_RUTINA_EJERCICIO, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            rutina: rutinaCreada.id,
+            ejercicio: sel.ejercicioId,
+            series: sel.series,
+            repeticiones: sel.repeticiones,
+            tiempo_seg: sel.tiempo_seg,
+          }),
+        });
+      }
+
       setOpenModal(false);
       setEditingRutina(null);
       setFormData({ nombre: "", descripcion: "", sug_semanas_em: "" });
+      setSelectedEjercicios([]);
       obtenerRutinas();
     } catch (error) {
       console.error("Error al guardar rutina:", error);
@@ -105,25 +153,29 @@ const Rutinas = () => {
 
   // ------------------------ FILTRO DE ADMIN ------------------------
   const esAdmin = (usuarioId) => {
-    const usuario = usuarios.find(u => u.id === usuarioId);
+    const usuario = usuarios.find((u) => u.id === usuarioId);
     return usuario ? usuario.rol === 1 : false;
   };
 
   // ------------------------ FILTRADO FINAL ------------------------
   const filteredRutinas = rutinas
-    .filter(rutina => esAdmin(rutina.usuario)) // solo admins
-    .filter(rutina =>
-      rutina.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      rutina.descripcion.toLowerCase().includes(searchTerm.toLowerCase())
+    .filter((rutina) => esAdmin(rutina.usuario))
+    .filter(
+      (rutina) =>
+        rutina.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        rutina.descripcion.toLowerCase().includes(searchTerm.toLowerCase())
     )
-    .filter(rutina =>
-      filtroSemana === "" ? true : rutina.sug_semanas_em == parseInt(filtroSemana)
+    .filter((rutina) =>
+      filtroSemana === ""
+        ? true
+        : rutina.sug_semanas_em == parseInt(filtroSemana)
     );
 
-  // ------------------------ ABRIR MODAL ------------------------
+  // ------------------------ MODALES ------------------------
   const abrirModalCrear = () => {
     setEditingRutina(null);
     setFormData({ nombre: "", descripcion: "", sug_semanas_em: "" });
+    setSelectedEjercicios([]);
     setOpenModal(true);
   };
 
@@ -134,12 +186,13 @@ const Rutinas = () => {
       descripcion: rutina.descripcion,
       sug_semanas_em: rutina.sug_semanas_em,
     });
+    obtenerEjerciciosRutina(rutina.id); // carga los ejercicios seleccionados
     setOpenModal(true);
   };
 
+  // ------------------------ RENDER ------------------------
   return (
     <div className="p-0 m-0 min-h-full w-full bg-white">
-
       {/* --- HEADER --- */}
       <div className="px-6 pt-6 pb-4">
         <div className="flex items-center justify-between mb-6">
@@ -152,20 +205,17 @@ const Rutinas = () => {
             </p>
           </div>
 
-          {/* Botón Nueva Rutina */}
           <button
             onClick={abrirModalCrear}
             className="flex items-center gap-2 px-4 py-2 text-white rounded-lg transition-all font-medium hover:shadow-lg transform hover:scale-105"
-            style={{
-              background: "linear-gradient(135deg, #722323 0%, #BA487F 100%)",
-            }}
+            style={{ background: "linear-gradient(135deg, #722323 0%, #BA487F 100%)" }}
           >
             <Plus size={20} />
             Nueva Rutina
           </button>
         </div>
 
-        {/* Búsqueda y filtro semana compacto */}
+        {/* --- BÚSQUEDA --- */}
         <div className="flex flex-row gap-2 max-w-md mb-4">
           <div className="relative w-2/3">
             <Search
@@ -203,7 +253,7 @@ const Rutinas = () => {
         </div>
       </div>
 
-      {/* --- TABLA --- */}
+      {/* --- TABLA DE RUTINAS --- */}
       <div className="mx-6 mb-6">
         <div className="bg-white rounded-xl shadow-md border-2" style={{ borderColor: "#BA487F" }}>
           <div className="overflow-x-auto">
@@ -231,58 +281,17 @@ const Rutinas = () => {
                     onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#FFECC0")}
                     onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "white")}
                   >
-                    <td className="px-6 py-4">
-                      <span className="text-sm font-semibold" style={{ color: "#722323" }}>
-                        #{rutina.id}
-                      </span>
-                    </td>
-
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <div
-                          className="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold"
-                          style={{
-                            background: "linear-gradient(135deg, #FF9587 0%, #BA487F 100%)",
-                          }}
-                        >
-                          {rutina.nombre.charAt(0)}
-                        </div>
-                        <span className="text-sm font-medium" style={{ color: "#722323" }}>
-                          {rutina.nombre}
-                        </span>
-                      </div>
-                    </td>
-
-                    <td className="px-6 py-4">
-                      <span className="text-sm" style={{ color: "#722323" }}>
-                        {rutina.descripcion}
-                      </span>
-                    </td>
-
-                    <td className="px-6 py-4">
-                      <span className="text-sm font-semibold" style={{ color: "#722323" }}>
-                        {rutina.sug_semanas_em} semanas
-                      </span>
-                    </td>
-
+                    <td className="px-6 py-4">#{rutina.id}</td>
+                    <td className="px-6 py-4">{rutina.nombre}</td>
+                    <td className="px-6 py-4">{rutina.descripcion}</td>
+                    <td className="px-6 py-4">{rutina.sug_semanas_em} semanas</td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center gap-2">
-                        <button
-                          className="p-2 rounded-lg"
-                          style={{ color: "#BA487F" }}
-                          onClick={() => abrirModalEditar(rutina)}
-                          title="Editar"
-                        >
-                          <Edit size={18} />
+                        <button onClick={() => abrirModalEditar(rutina)} title="Editar">
+                          <Edit size={18} style={{ color: "#BA487F" }} />
                         </button>
-
-                        <button
-                          className="p-2 rounded-lg"
-                          style={{ color: "#FF9587" }}
-                          onClick={() => eliminarRutina(rutina.id)}
-                          title="Eliminar"
-                        >
-                          <Trash2 size={18} />
+                        <button onClick={() => eliminarRutina(rutina.id)} title="Eliminar">
+                          <Trash2 size={18} style={{ color: "#FF9587" }} />
                         </button>
                       </div>
                     </td>
@@ -292,83 +301,105 @@ const Rutinas = () => {
             </table>
           </div>
 
-          <div
-            className="px-6 py-4 border-t-2"
-            style={{ borderTopColor: "#FFECCC", backgroundColor: "#FFECC0" }}
-          >
-            <p className="text-sm" style={{ color: "#722323" }}>
-              Mostrando{" "}
-              <span className="font-semibold">{filteredRutinas.length}</span> de{" "}
-              <span className="font-semibold">{rutinas.length}</span> rutinas
-            </p>
+          <div className="px-6 py-4 border-t-2" style={{ borderTopColor: "#FFECCC", backgroundColor: "#FFECC0", color: "#722323" }}>
+            Mostrando {filteredRutinas.length} de {rutinas.length} rutinas
           </div>
         </div>
       </div>
 
-      {/* --- MODAL --- */}
+      {/* --- MODAL CREAR/EDITAR RUTINA --- */}
       {openModal && (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl shadow-lg p-6 w-full max-w-lg border-2"
-            style={{ borderColor: "#BA487F" }}>
-
+          <div className="bg-white rounded-xl shadow-lg p-6 w-full max-w-lg border-2" style={{ borderColor: "#BA487F" }}>
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-bold" style={{ color: "#722323" }}>
                 {editingRutina ? "Editar Rutina" : "Nueva Rutina"}
               </h2>
-
-              <button
-                onClick={() => setOpenModal(false)}
-                className="p-2 rounded-lg"
-                style={{ color: "#FF9587" }}
-              >
-                <X size={20} />
+              <button onClick={() => setOpenModal(false)} className="p-2 rounded-lg">
+                <X size={20} style={{ color: "#FF9587" }} />
               </button>
             </div>
 
             <form onSubmit={manejarSubmit} className="flex flex-col gap-4">
-
               <input
                 type="text"
                 placeholder="Nombre"
                 required
                 value={formData.nombre}
-                onChange={(e) =>
-                  setFormData({ ...formData, nombre: e.target.value })
-                }
+                onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
                 className="border p-2 rounded-lg"
                 style={{ borderColor: "#FFC29B" }}
               />
-
               <textarea
                 placeholder="Descripción"
                 required
                 value={formData.descripcion}
-                onChange={(e) =>
-                  setFormData({ ...formData, descripcion: e.target.value })
-                }
+                onChange={(e) => setFormData({ ...formData, descripcion: e.target.value })}
                 className="border p-2 rounded-lg"
                 style={{ borderColor: "#FFC29B" }}
-              ></textarea>
-
+              />
               <input
                 type="number"
                 placeholder="Semanas sugeridas"
                 required
                 value={formData.sug_semanas_em}
-                onChange={(e) =>
-                  setFormData({ ...formData, sug_semanas_em: e.target.value })
-                }
+                onChange={(e) => setFormData({ ...formData, sug_semanas_em: e.target.value })}
                 className="border p-2 rounded-lg"
                 style={{ borderColor: "#FFC29B" }}
               />
 
+              {/* --- SELECCIÓN DE EJERCICIOS --- */}
+              <div className="flex flex-col gap-2 mt-2">
+                <h3 className="font-semibold text-sm" style={{ color: "#722323" }}>Seleccionar Ejercicios</h3>
+                {ejercicios.map((ej) => {
+                  const sel = selectedEjercicios.find((s) => s.ejercicioId === ej.id) || {};
+                  return (
+                    <div key={ej.id} className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={!!sel.ejercicioId}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setSelectedEjercicios([
+                              ...selectedEjercicios,
+                              { ejercicioId: ej.id, series: ej.series_default || 3, repeticiones: ej.repeticiones_default || 10, tiempo_seg: ej.tiempo_seg_default || 60 }
+                            ]);
+                          } else {
+                            setSelectedEjercicios(selectedEjercicios.filter(s => s.ejercicioId !== ej.id));
+                          }
+                        }}
+                      />
+                      <span className="text-sm" style={{ color: "#722323" }}>{ej.nombre}</span>
+                      <input
+                        type="number"
+                        value={sel.series || ""}
+                        placeholder="Series"
+                        className="border rounded px-2 py-1 w-16 text-sm"
+                        onChange={(e) => setSelectedEjercicios(selectedEjercicios.map(s => s.ejercicioId === ej.id ? { ...s, series: parseInt(e.target.value) } : s))}
+                      />
+                      <input
+                        type="number"
+                        value={sel.repeticiones || ""}
+                        placeholder="Repeticiones"
+                        className="border rounded px-2 py-1 w-20 text-sm"
+                        onChange={(e) => setSelectedEjercicios(selectedEjercicios.map(s => s.ejercicioId === ej.id ? { ...s, repeticiones: parseInt(e.target.value) } : s))}
+                      />
+                      <input
+                        type="number"
+                        value={sel.tiempo_seg || ""}
+                        placeholder="Tiempo(s)"
+                        className="border rounded px-2 py-1 w-20 text-sm"
+                        onChange={(e) => setSelectedEjercicios(selectedEjercicios.map(s => s.ejercicioId === ej.id ? { ...s, tiempo_seg: parseInt(e.target.value) } : s))}
+                      />
+                    </div>
+                  )
+                })}
+              </div>
+
               <button
                 type="submit"
                 className="w-full py-2 text-white rounded-lg mt-2 font-semibold"
-                style={{
-                  background:
-                    "linear-gradient(135deg, #722323 0%, #BA487F 100%)",
-                }}
+                style={{ background: "linear-gradient(135deg, #722323 0%, #BA487F 100%)" }}
               >
                 {editingRutina ? "Guardar cambios" : "Crear Rutina"}
               </button>
@@ -376,7 +407,6 @@ const Rutinas = () => {
           </div>
         </div>
       )}
-
     </div>
   );
 };

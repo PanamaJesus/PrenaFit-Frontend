@@ -7,6 +7,10 @@ export default function SignUpForm() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  const ICONS_PER_PAGE = 6;
+  const [iconPage, setIconPage] = useState(1);
+  const totalIconPages = Math.ceil(icons.length / ICONS_PER_PAGE);
+
   const [state, setState] = useState({
     nombre: "",
     ap_pat: "",
@@ -147,6 +151,21 @@ export default function SignUpForm() {
   const nextStep = () => setStep((prev) => Math.min(prev + 1, 5));
   const prevStep = () => setStep((prev) => Math.max(prev - 1, 1));
 
+  // 2. 🧮 NUEVA LÓGICA PARA MOSTRAR LOS ÍCONOS DE LA PÁGINA ACTUAL
+  const startIndex = (iconPage - 1) * ICONS_PER_PAGE;
+  const endIndex = startIndex + ICONS_PER_PAGE;
+  const currentIcons = icons.slice(startIndex, endIndex);
+
+  // 3. 🖱️ NUEVOS MANEJADORES DE PAGINACIÓN DE ÍCONOS
+  const goToIconPage = (pageNumber) => {
+    setIconPage(Math.min(Math.max(1, pageNumber), totalIconPages));
+  };
+  const nextIconPage = () => {
+    setIconPage((prev) => Math.min(prev + 1, totalIconPages));
+  };
+  const prevIconPage = () => {
+    setIconPage((prev) => Math.max(prev - 1, 1));
+  };
   return (
   <div className="form-container form-animation sign-up flex items-center justify-center">
     <form
@@ -313,45 +332,94 @@ export default function SignUpForm() {
 
       {/* PASO 4 */}
       {step === 4 && (
-        <>
-          <h2 className="text-lg font-semibold mb-3">Selecciona tu ícono</h2>
+          <>
+            <h2 className="text-lg font-semibold mb-3">Selecciona tu ícono</h2>
 
-          <div className="grid grid-cols-3 gap-4 mb-4">
-            {icons.map((icon) => (
-              <label
-                key={icon.id}
-                className={`cursor-pointer p-2 rounded-xl border transition transform
-                  ${
-                    state.imagen_perfil === icon.id
-                      ? "border-[#ff4b2b] scale-105 shadow-md"
-                      : "border-gray-300"
+            {/* Grid que solo muestra los íconos de la página actual */}
+            <div className="grid grid-cols-3 gap-4 mb-4">
+              {currentIcons.map((icon) => (
+                <label
+                  key={icon.id}
+                  className={`cursor-pointer p-2 rounded-xl border transition transform
+                    ${
+                      state.imagen_perfil === icon.id
+                        ? "border-[#ff4b2b] scale-105 shadow-md"
+                        : "border-gray-300 hover:border-gray-400"
+                    }`}
+                >
+                  <input
+                    type="radio"
+                    name="imagen_perfil"
+                    value={icon.id}
+                    checked={state.imagen_perfil === icon.id}
+                    onChange={(e) => {
+                      console.log("🖼 Ícono seleccionado:", e.target.value);
+                      setState({
+                        ...state,
+                        imagen_perfil: Number(e.target.value),
+                      });
+                    }}
+                    className="hidden"
+                  />
+                  <img
+                    src={icon.url}
+                    alt="icono perfil"
+                    className="w-16 h-16 object-contain mx-auto"
+                  />
+                </label>
+              ))}
+            </div>
+            
+            {/* 4. 🧭 Controles de Paginación de Íconos */}
+            {totalIconPages > 1 && (
+              <div className="flex justify-center items-center space-x-2 mt-4">
+                {/* Botón Anterior */}
+                <button
+                  type="button"
+                  onClick={prevIconPage}
+                  disabled={iconPage === 1}
+                  className={`p-2 rounded-full transition ${
+                    iconPage === 1 ? "text-gray-400 cursor-not-allowed" : "bg-gray-100 hover:bg-gray-200 text-[#ff4b2b]"
                   }`}
-              >
-                <input
-                  type="radio"
-                  name="imagen_perfil"
-                  value={icon.id}
-                  checked={state.imagen_perfil === icon.id}
-                  onChange={(e) => {
-                    console.log("🖼 Ícono seleccionado:", e.target.value);
-                    setState({
-                      ...state,
-                      imagen_perfil: Number(e.target.value)
-                    });
-                  }}
-                  className="hidden"
-                />
+                >
+                  {'<'}
+                </button>
 
-                <img
-                  src={icon.url}
-                  alt="icono perfil"
-                  className="w-16 h-16 object-contain mx-auto"
-                />
-              </label>
-            ))}
-          </div>
-        </>
-      )}
+                {/* Indicadores de Página */}
+                {[...Array(totalIconPages).keys()].map((index) => {
+                  const pageNumber = index + 1;
+                  return (
+                    <button
+                      type="button"
+                      key={pageNumber}
+                      onClick={() => goToIconPage(pageNumber)}
+                      className={`w-8 h-8 rounded-full text-sm font-medium transition ${
+                        pageNumber === iconPage
+                          ? "bg-[#ff4b2b] text-white shadow-md"
+                          : "text-gray-600 hover:bg-gray-100"
+                      }`}
+                    >
+                      {pageNumber}
+                    </button>
+                  );
+                })}
+
+                {/* Botón Siguiente */}
+                <button
+                  type="button"
+                  onClick={nextIconPage}
+                  disabled={iconPage === totalIconPages}
+                  className={`p-2 rounded-full transition ${
+                    iconPage === totalIconPages ? "text-gray-400 cursor-not-allowed" : "bg-gray-100 hover:bg-gray-200 text-[#ff4b2b]"
+                  }`}
+                >
+                  {'>'}
+                </button>
+              </div>
+            )}
+            
+          </>
+        )}
 
       {/* PASO 5 */}
       {step === 5 && (

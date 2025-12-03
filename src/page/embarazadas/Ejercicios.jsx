@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import "../../App.css";
 import NavbarE from "./NavEmb";
 import Footer from '../../components/Footer'
+import Ejercicio_Idx from '../../assets/fit4.jpg'
 
 function Ejercicios() {
   const userString = localStorage.getItem("usuario");
@@ -94,9 +95,7 @@ function Ejercicios() {
     );
   }
 
-  // ------------------------------------------
   // 🔥 PAGINACIÓN
-  // ------------------------------------------
   const [paginaActual, setPaginaActual] = useState(1);
   const ejerciciosPorPagina = 6;
 
@@ -122,8 +121,21 @@ function Ejercicios() {
       <div className="absolute -top-28 -left-28 w-[500px] h-screen bg-gradient-to-tr from-indigo-500/20 to-pink-500/20 rounded-full blur-[80px] -z-10"></div>
       <div className="overflow-hidden">
         <NavbarE />
+         {/* Fondo superior con imagen */}
+        <div
+          className="mt-20 w-full h-60 bg-cover bg-center relative"
+          style={{ backgroundImage: `url(${Ejercicio_Idx})` }}
+        >
+          {/* Capa oscura para que se lea el texto */}
+          <div className="absolute inset-0 bg-black/30"></div>
 
-        <div className="mt-28 px-6 center">
+          {/* Frase motivadora */}
+          <h2 className="absolute inset-0 flex items-center justify-center text-white text-3xl font-bold drop-shadow-lg px-4 text-center">
+            ¡Cada paso cuenta, y tú puedes lograrlo!
+          </h2>
+        </div>
+
+        <div className="mt-20 px-6 center">
           <div className="flex items-center gap-8 mb-6">
             <a
               href="#mis-ejercicios"
@@ -148,9 +160,7 @@ function Ejercicios() {
             <p>No tienes ejercicios disponibles para tu semana de embarazo.</p>
           )}
 
-          {/* ----------------------------------------------------
-              ⭐ GRID CON ANIMACIÓN SMOOTH (fade + slide)
-              ---------------------------------------------------- */}
+          {/*⭐ GRID CON ANIMACIÓN SMOOTH (fade + slide)*/}
           <motion.div
             key={paginaActual} // clave para animación al cambiar de página
             initial={{ opacity: 0, y: 40 }}

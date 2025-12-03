@@ -11,8 +11,8 @@ const NavbarE = () => {
     { href: "/IdxEmb", label: "Inicio" },
     { href: "/Estadisticas", label: "Signos vitales" },
     { href: "/Rutinas", label: "Rutinas" },
-    { href: "/Ejercicios", label: "Ejercicios" },
-    { href: "/contenido-usuario", label: "Contenido Educativo" },
+    { href: "/AllEjercicios", label: "Ejercicios" },
+    { href: "/TiposContenido", label: "Contenido Educativo" },
   ]
 
   const handleLogout = () => {
@@ -83,7 +83,7 @@ const NavbarE = () => {
           variants={fadeIn('left', 0.3)}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className="hidden md:block bg-[#A83279] text-white px-6 py-2.5 rounded-lg hover:bg-[#F39F9F] text-sm font-medium transition-all hover:shadow-lg hover:shadow-blue-100"
+          className="hidden md:block bg-[#F39F9F] text-white px-6 py-2.5 rounded-lg hover:bg-[#FFC29B] text-sm font-medium transition-all hover:shadow-lg hover:shadow-blue-100"
         >
           <a href="/Profile">Perfil</a>
         </motion.button>
@@ -92,7 +92,7 @@ const NavbarE = () => {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={handleLogout}
-          className="hidden md:block bg-[#722323] text-white px-6 py-2.5 rounded-lg hover:bg-red-700 text-sm font-medium transition-all hover:shadow-lg hover:shadow-red-100 ml-3"
+          className="hidden md:block bg-[#BA487F] text-white px-6 py-2.5 rounded-lg hover:bg-[#722323] text-sm font-medium transition-all hover:shadow-lg hover:shadow-red-100 ml-3"
         >
           Cerrar sesión
         </motion.button>
