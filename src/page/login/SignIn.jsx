@@ -75,18 +75,18 @@ function SignInForm() {
         onSubmit={handleOnSubmit}
         className="bg-white flex flex-col items-center justify-center px-10 h-full text-center"
       >
-        <h1 className="text-3xl font-bold mb-3">Sign In</h1>
+        <h1 className="text-3xl font-bold mb-3">Inicia Sesion</h1>
 
         {error && (
           <p className="text-red-500 text-sm mb-2">{error}</p>
         )}
 
-        <span className="text-xs text-gray-600">or use your account</span>
+        <span className="text-xs text-gray-600">Usa tu cuenta</span>
 
         <input
           type="email"
           name="correo"
-          placeholder="Email"
+          placeholder="Correo"
           value={state.correo}
           onChange={handleChange}
           className="bg-gray-200 border-none px-4 py-3 my-2 w-full outline-none rounded"
@@ -95,7 +95,7 @@ function SignInForm() {
         <input
           type="password"
           name="contrasena"
-          placeholder="Password"
+          placeholder="Contraseña"
           value={state.contrasena}
           onChange={handleChange}
           className="bg-gray-200 border-none px-4 py-3 my-2 w-full outline-none rounded"
@@ -104,7 +104,7 @@ function SignInForm() {
         <button
           className="mt-3 rounded-full px-10 py-3 text-white text-xs font-bold bg-[#BA487F] tracking-widest uppercase border border-[#BA487F] hover:scale-95 transition"
         >
-          Sign In
+          Iniciar sesion
         </button>
       </form>
     </div>

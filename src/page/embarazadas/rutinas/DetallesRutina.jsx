@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import NavbarE from '../NavEmb'
+import Footer from '../../../components/Footer'
 
 export default function DetallesRutina() {
 const { slug } = useParams();
@@ -105,7 +107,9 @@ const reseñasVisibles = rutina.reseñas.slice(inicio, fin);
 
 
   return (
-    <div className="max-w-4xl mx-auto px-5 py-8">
+    <main className="min-h-screen w-full overflow-x-hidden flex flex-col">
+      <NavbarE />
+      <div className="max-w-4xl mx-auto px-5 py-8 pt-24">
 
       {/* HEADER */}
       <div className="flex items-center gap-4 mb-6">
@@ -295,6 +299,8 @@ const reseñasVisibles = rutina.reseñas.slice(inicio, fin);
 
 
 
-    </div>
+      </div>
+      <Footer />
+    </main>
   );
 }

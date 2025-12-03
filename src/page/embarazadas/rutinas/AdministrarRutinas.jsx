@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import NavbarE from '../NavEmb'
+import Footer from '../../../components/Footer'
 
 export default function AdministrarRutinas() {
   const [activeTab, setActiveTab] = useState("creadas");
@@ -113,7 +115,9 @@ const eliminarRutina = async () => {
     );
 
   return (
-    <div className="p-6">
+    <main className="min-h-screen w-full overflow-x-hidden flex flex-col">
+      <NavbarE />
+      <div className="pt-24 p-6">
 
       {/* TABS */}
       <div className="flex justify-center mb-6 space-x-4">
@@ -322,6 +326,8 @@ const eliminarRutina = async () => {
         </div>
       )}
 
-    </div>
+      </div>
+      <Footer />
+    </main>
   );
 }

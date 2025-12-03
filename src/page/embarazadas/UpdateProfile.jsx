@@ -206,6 +206,14 @@ function UpdateProfile() {
           Editar Perfil
         </h2>
 
+        {/* Mensaje */}
+        {msg && (
+          <p className="text-center mt-2 text-[#BA487F] font-semibold">
+            {msg}
+          </p>
+        )}
+
+        {/* FORMULARIO */}
         {msg && <p className="text-center mt-2 text-[#BA487F] font-semibold">{msg}</p>}
 
         {/* FORMULARIO ÚNICO Y CORREGIDO */}
@@ -218,9 +226,10 @@ function UpdateProfile() {
             <p className="font-semibold">Nombre:</p>
             <input
               type="text"
-              name="nombre"
-              value={userData.nombre || ''} // Usa || '' para evitar advertencias de React si es undefined/null
-              onChange={handleUserChange}
+              value={userData.nombre}
+              onChange={(e) =>
+                setUserData({ ...userData, nombre: e.target.value })
+              }
               className="w-full mt-1 px-4 py-2 border rounded-lg"
             />
           </div>
@@ -230,9 +239,10 @@ function UpdateProfile() {
             <p className="font-semibold">Apellido Paterno:</p>
             <input
               type="text"
-              name="ap_pat"
-              value={userData.ap_pat || ''}
-              onChange={handleUserChange}
+              value={userData.ap_pat}
+              onChange={(e) =>
+                setUserData({ ...userData, ap_pat: e.target.value })
+              }
               className="w-full mt-1 px-4 py-2 border rounded-lg"
             />
           </div>
@@ -242,9 +252,10 @@ function UpdateProfile() {
             <p className="font-semibold">Apellido Materno:</p>
             <input
               type="text"
-              name="ap_mat"
-              value={userData.ap_mat || ''}
-              onChange={handleUserChange}
+              value={userData.ap_mat}
+              onChange={(e) =>
+                setUserData({ ...userData, ap_mat: e.target.value })
+              }
               className="w-full mt-1 px-4 py-2 border rounded-lg"
             />
           </div>
@@ -254,9 +265,10 @@ function UpdateProfile() {
             <p className="font-semibold">Correo:</p>
             <input
               type="email"
-              name="correo"
-              value={userData.correo || ''}
-              onChange={handleUserChange}
+              value={userData.correo}
+              onChange={(e) =>
+                setUserData({ ...userData, correo: e.target.value })
+              }
               className="w-full mt-1 px-4 py-2 border rounded-lg"
             />
           </div>
@@ -266,9 +278,13 @@ function UpdateProfile() {
             <p className="font-semibold">Fecha de nacimiento:</p>
             <input
               type="date"
-              name="fecha_nacimiento"
-              value={userData.fecha_nacimiento || ''}
-              onChange={handleUserChange}
+              value={userData.fecha_nacimiento}
+              onChange={(e) =>
+                setUserData({
+                  ...userData,
+                  fecha_nacimiento: e.target.value,
+                })
+              }
               className="w-full mt-1 px-4 py-2 border rounded-lg"
             />
           </div>
@@ -278,9 +294,13 @@ function UpdateProfile() {
             <p className="font-semibold">Semanas de embarazo:</p>
             <input
               type="number"
-              name="semana_embarazo"
-              value={userData.semana_embarazo || 0} // Usa || 0 para un campo numérico
-              onChange={handleUserChange}
+              value={userData.semana_embarazo}
+              onChange={(e) =>
+                setUserData({
+                  ...userData,
+                  semana_embarazo: e.target.value,
+                })
+              }
               className="w-full mt-1 px-4 py-2 border rounded-lg"
             />
           </div>
@@ -354,7 +374,8 @@ function UpdateProfile() {
         </button>
       </div>
     </main>
-  );
+);
+
 }
 
 export default UpdateProfile;
