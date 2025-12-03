@@ -338,7 +338,7 @@ const ejercicios_agregar = seleccionados
                     py-2 rounded-lg text-sm font-medium transition
                     ${isSelected
                       ? "bg-green-500 text-white opacity-90 cursor-not-allowed"
-                      : "bg-indigo-600 text-white hover:bg-indigo-700"
+                      : "btn-rosa text-white "
                     }
                   `}
                 >
@@ -347,7 +347,7 @@ const ejercicios_agregar = seleccionados
 
                 <button
                   onClick={() => toggleDetalles(ejercicio.id)}
-                  className="text-indigo-600 text-sm hover:underline"
+                  className="text-[#B95E82] text-sm hover:underline"
                 >
                   {isOpen ? "Ocultar detalles" : "Ver detalles"}
                 </button>
@@ -478,7 +478,7 @@ const ejercicios_agregar = seleccionados
       className={`w-full text-white py-2 rounded-lg transition ${
         seleccionados.length < 3 || seleccionados.length > 10
           ? "bg-gray-400 cursor-not-allowed"
-          : "bg-indigo-600 hover:bg-indigo-700"
+          : "btn-rosa"
       }`}
     >
        Actualizar rutina

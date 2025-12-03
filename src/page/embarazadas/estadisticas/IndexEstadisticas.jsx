@@ -25,13 +25,11 @@ function IndexEstadisticas() {
       {/* CONTENIDO REAL */}
       <div className="flex-1 w-full px-6 py-10">
 
-        <h1 className="text-4xl font-extrabold text-gray-800 mb-8">
+        <h1 className="text-4xl font-extrabold text-gray-500 mb-8">
           Signos vitales y Estadísticas
         </h1>
 
-        <h4 className="text-2xl font-bold text-gray-800 mb-6">
-          Última lectura
-        </h4>
+        
 
         {/* 🔥 SECCIÓN DE SIGNOS VITALES */}
         <UltimasLecturas />

@@ -187,7 +187,7 @@ const eliminarRutina = async () => {
                       const slug = r.nombre.toLowerCase().replace(/ /g, "-");
                       navigate(`/Rutina/${slug}`);
                     }}
-                    className="mt-4 w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition"
+                    className="mt-4 w-full btn-rosa text-white py-2 rounded-lg  transition"
                   >
                     Ver detalles
                   </button>
@@ -279,7 +279,7 @@ const eliminarRutina = async () => {
                       const slug = r.nombre.toLowerCase().replace(/ /g, "-");
                       navigate(`/Rutina/${slug}`);
                     }}
-                    className="mt-4 w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition"
+                    className="mt-4 w-full btn-rosa text-white py-2 rounded-lg  transition"
                   >
                     Ver detalles
                   </button>

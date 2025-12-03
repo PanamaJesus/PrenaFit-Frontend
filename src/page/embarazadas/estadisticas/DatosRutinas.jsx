@@ -35,9 +35,9 @@ export default function DatosRutinas() {
   if (cargando) return <p>Cargando rutinas...</p>;
 
   return (
-<div className="w-full max-w-none px-5 py-8 mx-0">
+<div className="w-full max-w-none px-5 py-8 mx-0 bg-white shadow-lg rounded-xl p-6 mt-10">
 
-<h1 className="text-2xl font-bold text-gray-800 mb-6">
+<h1 className="text-2xl font-bold text-gray-800 mb-6 ">
         Datos de Rutinas Realizadas
       </h1>
 
@@ -54,18 +54,6 @@ export default function DatosRutinas() {
             normalMax: rangos?.rbpm_superior || 100,
             alertaMin: (rangos?.rbpm_superior || 100) + 1,
             peligroMin: (rangos?.rbpm_superior || 100) + 20
-          },
-          presion: {
-            normalMin: 90,
-            normalMax: 120,
-            alertaMin: 121,
-            peligroMin: 140
-          },
-          temperatura: {
-            normalMin: 36.5,
-            normalMax: 37.5,
-            alertaMin: 37.6,
-            peligroMin: 38.1
           }
         }}
       />

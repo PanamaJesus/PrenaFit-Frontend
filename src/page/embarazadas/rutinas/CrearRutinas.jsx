@@ -19,6 +19,11 @@ const [iconoSeleccionado, setIconoSeleccionado] = useState(null);
 // pública / privada
 const [esPublica, setEsPublica] = useState(false);
 
+// Paginación
+const [paginaActual, setPaginaActual] = useState(1);
+const ejerciciosPorPagina = 9;
+
+
     // Agrega estos estados al inicio del componente:
 const [alerta, setAlerta] = useState(""); // mensaje de alerta
 const [alertaTipo, setAlertaTipo] = useState("error"); // "success" o "error"
@@ -213,14 +218,15 @@ const [alertaTipo, setAlertaTipo] = useState("error"); // "success" o "error"
     <div className="lg:col-span-3 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
 
       {ejercicios
-        .filter(e => e.nombre.toLowerCase().includes(search.toLowerCase()))
-        .filter(e => {
-          if (!rangoSemanas) return true;
-          const [min, max] = rangoSemanas.split("-").map(Number);
-          return e.sug_semanas >= min && e.sug_semanas <= max;
-        })
-        .filter(e => !categoriaFiltro || e.categoria === categoriaFiltro)
-        .map((ejercicio) => {
+  .filter(e => e.nombre.toLowerCase().includes(search.toLowerCase()))
+  .filter(e => {
+    if (!rangoSemanas) return true;
+    const [min, max] = rangoSemanas.split("-").map(Number);
+    return e.sug_semanas >= min && e.sug_semanas <= max;
+  })
+  .filter(e => !categoriaFiltro || e.categoria === categoriaFiltro)
+  .slice((paginaActual - 1) * ejerciciosPorPagina, paginaActual * ejerciciosPorPagina)
+  .map((ejercicio) =>  {
           const isSelected = seleccionados.some(e => e.id === ejercicio.id);
           const isOpen = detallesAbiertos[ejercicio.id] || false;
 
@@ -254,7 +260,7 @@ const [alertaTipo, setAlertaTipo] = useState("error"); // "success" o "error"
               <h3 className="text-lg font-bold text-center">{ejercicio.nombre}</h3>
 
               {/* Categoría */}
-              <p className="text-indigo-600 text-sm text-center font-medium">{ejercicio.categoria}</p>
+              <p className="text-[#B95E82] text-sm text-center font-medium">{ejercicio.categoria}</p>
 
               {/* Semanas */}
               <p className="text-gray-600 text-sm text-center">
@@ -271,7 +277,7 @@ const [alertaTipo, setAlertaTipo] = useState("error"); // "success" o "error"
                     py-2 rounded-lg text-sm font-medium transition
                     ${isSelected
                       ? "bg-green-500 text-white opacity-90 cursor-not-allowed"
-                      : "bg-indigo-600 text-white hover:bg-indigo-700"
+                      : "bg-[#F39F9F] text-white hover:bg-[#B95E82]"
                     }
                   `}
                 >
@@ -280,7 +286,7 @@ const [alertaTipo, setAlertaTipo] = useState("error"); // "success" o "error"
 
                 <button
                   onClick={() => toggleDetalles(ejercicio.id)}
-                  className="text-indigo-600 text-sm hover:underline"
+                  className="text-[#B95E82] text-sm hover:underline"
                 >
                   {isOpen ? "Ocultar detalles" : "Ver detalles"}
                 </button>
@@ -410,7 +416,7 @@ const [alertaTipo, setAlertaTipo] = useState("error"); // "success" o "error"
       className={`w-full text-white py-2 rounded-lg transition ${
         seleccionados.length < 3 || seleccionados.length > 10
           ? "bg-gray-400 cursor-not-allowed"
-          : "bg-indigo-600 hover:bg-indigo-700"
+          : "bg-[#F39F9F] hover:bg-[#B95E82]"
       }`}
     >
       Guardar rutina
@@ -435,6 +441,38 @@ const [alertaTipo, setAlertaTipo] = useState("error"); // "success" o "error"
 
 
   </div>
+  {/* PAGINACIÓN */}
+<div className="col-span-full flex justify-center mt-6">
+  {Array.from({
+    length: Math.ceil(
+      ejercicios.filter(e => e.nombre.toLowerCase().includes(search.toLowerCase()))
+      .filter(e => {
+        if (!rangoSemanas) return true;
+        const [min, max] = rangoSemanas.split("-").map(Number);
+        return e.sug_semanas >= min && e.sug_semanas <= max;
+      })
+      .filter(e => !categoriaFiltro || e.categoria === categoriaFiltro).length 
+      / ejerciciosPorPagina
+    )
+  }).map((_, i) => {
+    const num = i + 1;
+    return (
+      <button
+        key={num}
+        onClick={() => setPaginaActual(num)}
+        className={`
+          mx-1 px-4 py-2 rounded-lg border transition
+          ${paginaActual === num
+            ? "bg-[#F39F9F] text-white border-[#F39F9F]"
+            : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"}
+        `}
+      >
+        {num}
+      </button>
+    );
+  })}
+</div>
+
 </div>
 
 

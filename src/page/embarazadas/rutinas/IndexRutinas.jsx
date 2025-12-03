@@ -13,13 +13,11 @@ function IndexRutinas() {
   };
 
   return (
-    
     <main className="min-h-screen w-full overflow-x-hidden flex flex-col ">
-  <div className="absolute -top-28 -left-28 w-[500px] h-screen bg-gradient-to-tr from-indigo-500/20 to-pink-500/20 rounded-full blur-[80px] -z-10"></div>
-  <NavbarE />
+      <div className="absolute -top-28 -left-28 w-[500px] h-screen bg-gradient-to-tr from-indigo-500/20 to-pink-500/20 rounded-full blur-[80px] -z-10"></div>
+      <NavbarE />
 
-
-    <div className="pt-24 flex-1 w-full px-6 py-10 mx-auto">
+      <div className="pt-24 flex-1 w-full px-6 py-10 mx-auto">
 
         {/* Banner anuncio */}
         <div className="w-full bg-[#FFECC0] border-l-4 border-[#f7d484] p-8 mt-5 rounded-lg mb-10 
@@ -36,21 +34,17 @@ function IndexRutinas() {
   </div>
 
 
-{/* 🔥 Contenedor con mismo ancho que las rutinas */}
-<div className="p-6">
-  
-
-
-  {/* Lista de rutinas seleccionadas */}
-  <RutinasSeleccionadas />
-
-</div>
+        {/* Contenedor con mismo ancho que las rutinas */}
+        <div className="p-6">
+          {/* Lista de rutinas seleccionadas */}
+          <RutinasSeleccionadas />
+        </div>
 
         <div className="px-6 py-10">
           <h2 className="text-3xl font-bold mb-6 text-center text-gray-500">Rutinas para Embarazadas</h2>
           <RutinaLista />
         </div>
-        
+
       </div>
 
       <Footer />

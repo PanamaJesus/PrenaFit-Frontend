@@ -22,7 +22,7 @@ export default function DetallesRutina() {
     // ESTADO AÑADIDO: Almacena el ID del registro en la tabla RutinasGuardados
     const [guardadoId, setGuardadoId] = useState(null);
 
-
+  
     // ... (La función enviarResena permanece sin cambios) ...
     const enviarResena = async () => {
         if (!comentario.trim()) return;
@@ -173,6 +173,7 @@ export default function DetallesRutina() {
                     });
 
                     const dataDetalle = await resDetalle.json();
+                    console.log("data" + dataDetalle)
                     setRutina(dataDetalle);
 
                     // 3. Verificar estado de guardado
@@ -227,14 +228,14 @@ export default function DetallesRutina() {
                             className={`mt-2 px-4 py-2 text-sm font-semibold rounded-lg transition ${
                                 guardada
                                     ? "bg-red-500 text-white hover:bg-red-600"
-                                    : "bg-indigo-600 text-white hover:bg-indigo-700"
+                                    : "bg-[#F39F9F] text-white hover:bg-[#B95E82]"
                             }`}
                         >
                             {guardando 
                                 ? "Procesando..." 
                                 : guardada 
-                                    ? "❌ Desguardar" // Cambiado a Desguardar
-                                    : "⭐ Guardar rutina"}
+                                    ? "Desguardar" // Cambiado a Desguardar
+                                    : "Guardar rutina"}
                         </button>
                     )}
 
@@ -275,9 +276,9 @@ export default function DetallesRutina() {
                             key={e.id}
                             className="p-4 bg-white rounded-xl shadow border flex gap-4"
                         >
-                            {e.imagen_url && (
+                            {e.icono_url && (
                                 <img
-                                    src={`http://127.0.0.1:8000${e.imagen_url}`}
+                                    src={`http://127.0.0.1:8000${e.icono_url}`}
                                     className="w-28 h-28 object-cover rounded-lg"
                                     alt={e.ejercicio.nombre}
                                 />
@@ -298,7 +299,7 @@ export default function DetallesRutina() {
                                     </div>
                                     <div className="text-center">
                                         <p className="text-xs text-gray-500">Tiempo</p>
-                                        <p className="font-bold">{e.tiempo_seg}s</p>
+                                        <p className="font-bold">{e.tiempo_seg / 60}min</p>
                                     </div>
                                 </div>
                             </div>
@@ -312,7 +313,7 @@ export default function DetallesRutina() {
 
                     <button
                         onClick={() => setMostrarResenas(prev => !prev)}
-                        className="text-sm px-3 py-1 bg-gray-200 rounded hover:bg-gray-300"
+                        className="text-sm px-3 py-1 bg-gray-200 rounded btn-rosa"
                     >
                         {mostrarResenas ? "Ocultar" : "Mostrar"}
                     </button>
@@ -353,7 +354,7 @@ export default function DetallesRutina() {
                             <button
                                 disabled={pagina === 1}
                                 onClick={() => setPagina(pagina - 1)}
-                                className="px-3 py-1 bg-gray-200 rounded disabled:opacity-40"
+                                className="px-3 py-1 bg-gray-200 rounded disabled:opacity-40 btn-rosa"
                             >
                                 ← Anterior
                             </button>
@@ -361,7 +362,7 @@ export default function DetallesRutina() {
                             <button
                                 disabled={fin >= rutina.reseñas.length}
                                 onClick={() => setPagina(pagina + 1)}
-                                className="px-3 py-1 bg-gray-200 rounded disabled:opacity-40"
+                                className="px-3 py-1  rounded disabled:opacity-40 btn-rosa"
                             >
                                 Siguiente →
                             </button>
@@ -399,7 +400,7 @@ export default function DetallesRutina() {
                     <button
                         onClick={enviarResena}
                         disabled={enviando}
-                        className="mt-3 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition w-full"
+                        className="mt-3 btn-rosa text-white px-4 py-2 rounded-lg  transition w-full"
                     >
                         {enviando ? "Enviando..." : "Enviar reseña"}
                     </button>

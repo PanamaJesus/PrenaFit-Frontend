@@ -1,11 +1,31 @@
+import { image, img } from "framer-motion/client";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import eyeOpen from "../../utils/ojo.png";
+import eyeClosed from "../../utils/invisible.png";
+
 
 export default function SignUpForm() {
   const [icons, setIcons] = useState([]);
   const [successMsg, setSuccessMsg] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [passwordError, setPasswordError] = useState("");
+const [capsLockOn, setCapsLockOn] = useState(false);
+const [showPassword, setShowPassword] = useState(false);
+const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+const [errorMsg, setErrorMsg] = useState("");
+const [errores, setErrores] = useState({
+  fechaNacimiento: "",
+  semanaEmbarazo: "",
+});
+const [fieldErrors, setFieldErrors] = useState({
+  fecha_nacimiento: null,
+  semana_inicial_registro: null,
+});
+
+
+
 
   const ICONS_PER_PAGE = 6;
   const [iconPage, setIconPage] = useState(1);
@@ -30,7 +50,8 @@ export default function SignUpForm() {
     contacto_nombre: "",
     contacto_ap_pat: "",
     contacto_ap_mat: "",
-    contacto_correo: ""
+    contacto_correo: "",
+    confirmar_contrasena: ""
   });
 
   // 🔹 Cargar íconos del backend
@@ -64,63 +85,93 @@ export default function SignUpForm() {
       ...state,
       [name]: type === "checkbox" ? checked : value
     });
+   // Validaciones en tiempo real para los campos reales del state
+  if (name === "fecha_nacimiento") {
+    const error = validarFechaNacimiento(value);
+    setFieldErrors((prev) => ({ ...prev, fecha_nacimiento: error }));
+  }
+
+  if (name === "semana_inicial_registro") {
+    const error = validarSemanaEmbarazo(value);
+    setFieldErrors((prev) => ({ ...prev, semana_inicial_registro: error }));
+  }
   };
 
   // 🔹 Enviar el formulario
   const handleOnSubmit = async (e) => {
     e.preventDefault();
     setSuccessMsg("");
+    setErrorMsg("");
     setLoading(true);
+  
+    // Validación de contraseña
+    if (state.contrasena !== state.confirmar_contrasena) {
+      setErrorMsg("Las contraseñas no coinciden.");
+      setLoading(false);
+      return;
+    }
+  
+    // Confirmación
+    if (state.contrasena !== state.confirmar_contrasena) {
+      setErrorMsg("Las contraseñas no coinciden.");
+      setLoading(false);
+      return;
+    }
 
+    
+  
     const payload = {
       ...state,
       fecha_nacimiento: state.fecha_nacimiento || null,
-      
+  
       semana_inicial_registro:
-    state.semana_inicial_registro === "" 
-    ? null 
-    : Number(state.semana_inicial_registro),
+        state.semana_inicial_registro === ""
+          ? null
+          : Number(state.semana_inicial_registro),
+  
       rbpm_inferior:
         state.rbpm_inferior === "" ? null : Number(state.rbpm_inferior),
       rbpm_superior:
         state.rbpm_superior === "" ? null : Number(state.rbpm_superior),
+  
       rox_inferior:
         state.rox_inferior === "" ? null : Number(state.rox_inferior),
       rox_superior:
         state.rox_superior === "" ? null : Number(state.rox_superior),
-      rol: 2
+  
+      rol: 2,
     };
-
-    console.log("📤 JSON que se enviará al backend:", payload);
-
+  
+    console.log("📤 Enviando payload:", payload);
+  
     try {
-      console.log("payload", payload);
       const response = await fetch("http://127.0.0.1:8000/api/register/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
       });
-
+  
       const data = await response.json();
-
       console.log("Respuesta del backend:", data);
-
+  
       if (!response.ok) {
-        alert("Error: " + (data.error || "No se pudo registrar"));
+        setErrorMsg(data.error || "No se pudo registrar.");
         setLoading(false);
         return;
       }
-
-      console.log("Usuario registrado:", data);
-      setSuccessMsg("✅ Tu cuenta se creó correctamente. Redirigiéndote a tu inicio...");
-
+  
+      // Éxito
+      setSuccessMsg("✅ Tu cuenta se creó correctamente. Redirigiéndote...");
+      setErrorMsg("");
+  
+      // Reset
       setState({
         nombre: "",
         ap_pat: "",
         ap_mat: "",
         correo: "",
         contrasena: "",
-        semana_embarazo: "",
+        semana_inicial_registro: "",
         rol: 2,
         codigo_vinculacion: "",
         estado: true,
@@ -133,22 +184,82 @@ export default function SignUpForm() {
         contacto_nombre: "",
         contacto_ap_pat: "",
         contacto_ap_mat: "",
-        contacto_correo: ""
+        contacto_correo: "",
       });
-
+  
       setTimeout(() => {
         navigate("/IdxEmb");
       }, 2000);
-
+  
     } catch (error) {
-      console.error("❌ Error al conectar con backend:", error);
-      alert("Error al conectar con el servidor");
+      console.error("❌ Error al conectar:", error);
+      setErrorMsg("Error al conectar con el servidor.");
       setLoading(false);
     }
   };
+  
+ // ---------- VALIDADORES ----------
+const validarFechaNacimiento = (fechaStr) => {
+  if (!fechaStr) return "La fecha es obligatoria.";
+
+  const fechaNac = new Date(fechaStr + "T00:00:00"); // evita errores por zona horaria
+  if (isNaN(fechaNac.getTime())) return "Formato de fecha inválido.";
+
+  const hoy = new Date();
+  const hoySinHora = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
+
+  if (fechaNac > hoySinHora) return "La fecha de nacimiento no puede ser futura.";
+
+  // calcular edad
+  let edad = hoy.getFullYear() - fechaNac.getFullYear();
+  const cumple =
+    hoy.getMonth() > fechaNac.getMonth() ||
+    (hoy.getMonth() === fechaNac.getMonth() && hoy.getDate() >= fechaNac.getDate());
+  if (!cumple) edad--;
+
+  if (edad < 12) return "La edad debe ser al menos 12 años.";
+  if (edad > 60) return "La edad debe ser menor o igual a 60 años.";
+
+  return null;
+};
+
+const validarSemanaEmbarazo = (semStr) => {
+  if (semStr === "" || semStr === null || semStr === undefined)
+    return "La semana es obligatoria.";
+
+  const trimmed = String(semStr).trim();
+  if (!/^\d+$/.test(trimmed)) return "Debe ser un número entero.";
+
+  const numero = parseInt(trimmed, 10);
+  if (numero < 1) return "La semana debe ser mayor o igual a 1.";
+  if (numero > 42) return "No puede ser mayor a 42.";
+
+  return null;
+};
+
+  
+  
 
   const [step, setStep] = React.useState(1);
-  const nextStep = () => setStep((prev) => Math.min(prev + 1, 5));
+// ---- reemplaza nextStep ----
+const nextStep = () => {
+  // Si estamos en el paso 1 validamos fecha_nacimiento
+  if (step === 1) {
+    const errFecha = validarFechaNacimiento(state.fecha_nacimiento);
+    setFieldErrors((prev) => ({ ...prev, fecha_nacimiento: errFecha }));
+    if (errFecha) return; // no avanzar
+  }
+
+  // Si estamos en el paso 2 validamos semana_inicial_registro
+  if (step === 2) {
+    const errSemana = validarSemanaEmbarazo(state.semana_inicial_registro);
+    setFieldErrors((prev) => ({ ...prev, semana_inicial_registro: errSemana }));
+    if (errSemana) return; // no avanzar
+  }
+
+  setStep((prev) => Math.min(prev + 1, 5));
+};
+
   const prevStep = () => setStep((prev) => Math.max(prev - 1, 1));
 
   // 2. 🧮 NUEVA LÓGICA PARA MOSTRAR LOS ÍCONOS DE LA PÁGINA ACTUAL
@@ -182,6 +293,12 @@ export default function SignUpForm() {
           {successMsg}
         </p>
       )}
+      {errorMsg && (
+        <p className="text-xs text-red-600 mb-3 max-w-xs">
+          {errorMsg}
+        </p>
+      )}
+
 
       {/* PASO 1 */}
       {step === 1 && (
@@ -215,15 +332,21 @@ export default function SignUpForm() {
             className="bg-gray-200 px-4 py-3 my-2 w-full rounded"
             required
           />
-          <label className="text-sm text-gray-600 mb-1 font-semibold w-full text-left">Fecha de nacimiento</label>
+          <label className="w-full text-left text-sm font-semibold">Fecha de nacimiento</label>
           <input
-            type="date"
-            name="fecha_nacimiento"
-            value={state.fecha_nacimiento ?? ""}
-            onChange={handleChange}
-            className="bg-gray-200 px-4 py-3 my-2 w-full rounded"
-            required
-          />
+  type="date"
+  name="fecha_nacimiento"
+  value={state.fecha_nacimiento || ""}
+  onChange={handleChange}
+  onBlur={() => {
+    const err = validarFechaNacimiento(state.fecha_nacimiento);
+    setFieldErrors(prev => ({ ...prev, fecha_nacimiento: err }));
+  }}
+  className={`bg-gray-200 px-4 py-3 my-2 w-full rounded 
+    ${fieldErrors.fecha_nacimiento ? "border-red-400 border" : ""}`}
+  max={new Date().toISOString().split("T")[0]}
+/>
+
 
           
         </>
@@ -234,16 +357,23 @@ export default function SignUpForm() {
       {/* PASO 2 */}
       {step === 2 && (
         <>
-          <input
+<label className="w-full text-left text-sm font-semibold mt-3">Semana de embarazo</label>
+<input
   type="number"
-  name="semana_inicial_registro" // ✅ Corregido a 'semana_inicial_registro'
-  placeholder="Semana de embarazo"
-  value={state.semana_inicial_registro} // ✅ Corregido a 'state.semana_inicial_registro'
+  name="semana_inicial_registro"
+  value={state.semana_inicial_registro || ""}
   onChange={handleChange}
-  className="bg-gray-200 px-4 py-3 my-2 w-full rounded"
+  onBlur={() => {
+    const err = validarSemanaEmbarazo(state.semana_inicial_registro);
+    setFieldErrors(prev => ({ ...prev, semana_inicial_registro: err }));
+  }}
+  className={`bg-gray-200 px-4 py-3 my-2 w-full rounded 
+    ${fieldErrors.semana_inicial_registro ? "border-red-400 border" : ""}`}
   min="1"
-  required
+  max="42"
 />
+
+
 
           <p className="text-sm text-gray-600 mt-4 mb-1 font-semibold w-full text-left">
             Rangos de frecuencia cardiaca (latidos por minuto)
@@ -308,27 +438,74 @@ export default function SignUpForm() {
 
       {/* PASO 3 */}
       {step === 3 && (
-        <>
-         <input
-            type="email"
-            name="correo"
-            placeholder="Correo"
-            value={state.correo}
-            onChange={handleChange}
-            className="bg-gray-200 px-4 py-3 my-2 w-full rounded"
-            required
-          />
-          <input
-            type="password"
-            name="contrasena"
-            placeholder="Contraseña"
-            value={state.contrasena}
-            onChange={handleChange}
-            className="bg-gray-200 px-4 py-3 my-2 w-full rounded"
-            required
-          />
-        </>
+  <>
+    <input
+      type="email"
+      name="correo"
+      placeholder="Correo"
+      value={state.correo}
+      onChange={handleChange}
+      className="bg-gray-200 px-4 py-3 my-2 w-full rounded"
+      required
+    />
+
+    {/* 🔐 CONTRASEÑA CON OJO */}
+    <div className="relative w-full">
+      <input
+        type={showPassword ? "text" : "password"}
+        name="contrasena"
+        placeholder="Contraseña"
+        value={state.contrasena}
+        onChange={handleChange}
+        className="bg-gray-200 px-4 py-3 my-2 w-full rounded pr-10"
+        required
+      />
+      {/* 👁️ OJO PARA MOSTRAR / OCULTAR */}
+      <span
+        className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-gray-600"
+        onClick={() => setShowPassword((prev) => !prev)}
+      >
+        {showPassword ? (
+  <img src={eyeOpen} className="w-5 h-5" />
+) : (
+  <img src={eyeClosed} className="w-5 h-5" />
+)}
+
+      </span>
+    </div>
+
+    {/* 🔁 CONFIRMAR CONTRASEÑA CON OJO */}
+    <div className="relative w-full">
+      <input
+        type={showConfirmPassword ? "text" : "password"}
+        name="confirmar_contrasena"
+        placeholder="Confirmar contraseña"
+        value={state.confirmar_contrasena}
+        onChange={handleChange}
+        className="bg-gray-200 px-4 py-3 my-2 w-full rounded pr-10"
+        required
+      />
+      <span
+        className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-gray-600"
+        onClick={() => setShowConfirmPassword((prev) => !prev)}
+      >
+               {showConfirmPassword ? (
+  <img src={eyeOpen} className="w-5 h-5" />
+) : (
+  <img src={eyeClosed} className="w-5 h-5" />
+)}
+      </span>
+    </div>
+
+    {/* ❗ MENSAJE SI NO COINCIDEN */}
+    {state.confirmar_contrasena &&
+      state.contrasena !== state.confirmar_contrasena && (
+        <p className="text-red-500 text-xs w-full text-left">
+          Las contraseñas no coinciden.
+        </p>
       )}
+  </>
+)}
 
       {/* PASO 4 */}
       {step === 4 && (

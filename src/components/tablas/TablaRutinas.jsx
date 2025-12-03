@@ -28,19 +28,6 @@ export default function TablaRutinas({ rutinas = [], rangos = {} }) {
         if (valor > r.normalMax) return "text-orange-500 font-semibold";
         return "text-green-600 font-semibold";
 
-      case "presion":
-        // fallback seguro
-        const presion = valor || "0/0";
-        const sistolica = parseInt(presion.split("/")[0]);
-        if (sistolica >= r.peligroMin) return "text-red-600 font-bold";
-        if (sistolica > r.normalMax) return "text-orange-500 font-semibold";
-        return "text-green-600 font-semibold";
-
-      case "temperatura":
-        if (valor >= r.peligroMin) return "text-red-600 font-bold";
-        if (valor >= r.alertaMin) return "text-orange-500 font-semibold";
-        return "text-green-600 font-semibold";
-
       default:
         return "";
     }
@@ -55,11 +42,10 @@ export default function TablaRutinas({ rutinas = [], rangos = {} }) {
             <th className="p-3">Rutina</th>
             <th className="p-3">Fecha</th>
             <th className="p-3">Oxige (%)</th>
-            <th className="p-3">Presión</th>
             <th className="p-3">Frec. Cardiaca</th>
-            {/* <th className="p-3">Temperatura</th> */}
+            <th className="p-3">Calorias</th> 
             <th className="p-3">Tiempo</th>
-            <th className="p-3">Calorias</th>
+          
           </tr>
         </thead>
 
@@ -73,20 +59,17 @@ export default function TablaRutinas({ rutinas = [], rangos = {} }) {
                 {r.promedioOxigenacion ?? "—"}%
               </td>
 
-              <td className={`p-3 ${getColorClass(r.promedioPresion, "presion")}`}>
-                {r.promedioPresion || "0/0"}
-              </td>
-
+              
               <td className={`p-3 ${getColorClass(r.promedioFrecuencia, "frecuencia")}`}>
                 {r.promedioFrecuencia ?? "—"} bpm
               </td>
 
-              {/* <td className={`p-3 ${getColorClass(r.promedioTemperatura, "temperatura")}`}>
-                {r.promedioTemperatura ?? "—"}°C
-              </td> */}
+              <td className={`p-3 ${getColorClass(r.calorias, "calorias")}`}>
+                {r.promedioTemperatura ?? "—"}
+              </td> 
 
               <td className="p-3">{r.tiempo || "—"}</td>
-              <td className="p-3">{r.calorias || "—"}</td>
+             
 
             </tr>
           ))}
