@@ -22,14 +22,14 @@ function IndexRutinas() {
     <div className="pt-24 flex-1 w-full px-6 py-10 mx-auto">
 
         {/* Banner anuncio */}
-        <div className="w-full bg-indigo-100 border-l-4 border-indigo-500 p-8 mt-5 rounded-lg mb-10 
+        <div className="w-full bg-[#FFECC0] border-l-4 border-[#f7d484] p-8 mt-5 rounded-lg mb-10 
                   flex flex-col md:flex-row items-center justify-between gap-4">
-    <p className="text-indigo-800 font-semibold text-lg">
+    <p className="text-[#B95E82] font-semibold text-lg">
       ¡Crea tu propia rutina personalizada!
     </p>
     <button
       onClick={irACrearRutina}
-      className="bg-indigo-600 text-white px-5 py-2 rounded-lg hover:bg-indigo-700 transition-colors"
+      className="bg-[#F39F9F] text-white px-5 py-2 rounded-lg hover:bg-[#B95E82] transition-colors"
     >
       Crear Rutina
     </button>
@@ -47,7 +47,7 @@ function IndexRutinas() {
 </div>
 
         <div className="px-6 py-10">
-          <h2 className="text-3xl font-bold mb-6 text-center">Rutinas para Embarazadas</h2>
+          <h2 className="text-3xl font-bold mb-6 text-center text-gray-500">Rutinas para Embarazadas</h2>
           <RutinaLista />
         </div>
         

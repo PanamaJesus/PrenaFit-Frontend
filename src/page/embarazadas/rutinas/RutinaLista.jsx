@@ -14,18 +14,9 @@ export default function RutinaLista() {
   const [rangoEjercicios, setRangoEjercicios] = useState("");
   const [duracionMax, setDuracionMax] = useState("");
 
-  // Modal
-  const [rutinaSeleccionada, setRutinaSeleccionada] = useState(null);
-  const onClose = () => setRutinaSeleccionada(null);
-
-  const intervalosSemanas = [
-    "0-3", "4-8", "8-12", "12-16", "16-20",
-    "20-24", "24-28", "28-32", "32-36", "36-40", "38-42"
-  ];
-
-  const intervalosEjercicios = ["0-4", "4-8", "8-12"];
-
-  const intervalosDuracion = ["0-5", "5-10", "10-15", "15-20", "20-25", "25-30"];
+  // PAGINACIÓN
+  const [currentPage, setCurrentPage] = useState(1);
+  const rutinasPorPagina = 12;
 
   useEffect(() => {
     const fetchRutinas = async () => {
@@ -39,7 +30,6 @@ export default function RutinaLista() {
         setLoading(false);
       }
     };
-
     fetchRutinas();
   }, []);
 
@@ -70,6 +60,19 @@ export default function RutinaLista() {
     return matchNombre && matchSemanas && matchEjercicios && matchDuracion;
   });
 
+  // 🟦 PAGINACIÓN LÓGICA
+  const totalPaginas = Math.ceil(rutinasFiltradas.length / rutinasPorPagina);
+
+  const indexInicio = (currentPage - 1) * rutinasPorPagina;
+  const indexFin = indexInicio + rutinasPorPagina;
+
+  const rutinasPagina = rutinasFiltradas.slice(indexInicio, indexFin);
+
+  const cambiarPagina = (num) => {
+    setCurrentPage(num);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   if (loading)
     return <p className="text-center text-lg font-semibold">Cargando rutinas...</p>;
 
@@ -78,61 +81,55 @@ export default function RutinaLista() {
 
       {/* 🔍 BUSCADOR Y SELECTS */}
       <div className="bg-white px-4 py-4 rounded-xl shadow mb-6 grid grid-cols-1 md:grid-cols-4 gap-4">
-
-        {/* BUSCADOR */}
         <input
           type="text"
           placeholder="Buscar por nombre..."
           className="border rounded-lg p-2"
           value={busqueda}
-          onChange={(e) => setBusqueda(e.target.value)}
+          onChange={(e) => {
+            setBusqueda(e.target.value);
+            setCurrentPage(1);
+          }}
         />
 
-        {/* SELECT DE SEMANAS */}
         <select
           className="border rounded-lg p-2"
           value={rangoSemanas}
-          onChange={(e) => setRangoSemanas(e.target.value)}
+          onChange={(e) => { setRangoSemanas(e.target.value); setCurrentPage(1); }}
         >
           <option value="">Filtrar por semanas</option>
-          {intervalosSemanas.map((r, idx) => (
-            <option key={idx} value={r}>{r} semanas</option>
-          ))}
+          {["0-3","4-8","8-12","12-16","16-20","20-24","24-28","28-32","32-36","36-40","38-42"]
+            .map((r, i) => <option key={i} value={r}>{r} semanas</option>)}
         </select>
 
-        {/* SELECT DE EJERCICIOS */}
         <select
           className="border rounded-lg p-2"
           value={rangoEjercicios}
-          onChange={(e) => setRangoEjercicios(e.target.value)}
+          onChange={(e) => { setRangoEjercicios(e.target.value); setCurrentPage(1); }}
         >
           <option value="">Filtrar por ejercicios</option>
-          {intervalosEjercicios.map((r, idx) => (
-            <option key={idx} value={r}>{r} ejercicios</option>
+          {["0-4", "4-8", "8-12"].map((r, i) => (
+            <option key={i} value={r}>{r} ejercicios</option>
           ))}
         </select>
 
-        {/* SELECT DE DURACIÓN */}
         <select
           className="border rounded-lg p-2"
           value={duracionMax}
-          onChange={(e) => setDuracionMax(e.target.value)}
+          onChange={(e) => { setDuracionMax(e.target.value); setCurrentPage(1); }}
         >
           <option value="">Duración (min)</option>
-          {intervalosDuracion.map((d, idx) => (
-            <option key={idx} value={d}>{d} min</option>
+          {["0-5","5-10","10-15","15-20","20-25","25-30"].map((d, i) => (
+            <option key={i} value={d}>{d} min</option>
           ))}
         </select>
-
       </div>
 
       {/* 🔥 TARJETAS */}
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {rutinasFiltradas.map((r) => (
-          <div
-            key={r.id}
-            className="p-5 bg-white shadow rounded-xl hover:shadow-lg transition cursor-pointer border"
-          >
+        {rutinasPagina.map((r) => (
+          <div key={r.id}
+            className="p-5 bg-white shadow rounded-xl hover:shadow-lg transition cursor-pointer border">
 
             {r.icono_url && (
               <img
@@ -143,34 +140,77 @@ export default function RutinaLista() {
             )}
 
             <h3 className="text-xl font-bold text-center mb-2">{r.nombre}</h3>
-            {/* 🔵 CREADOR */}
-<p className="text-xs text-center mt-1 px-2 py-1 rounded-full inline-block
-    bg-purple-100 text-purple-700 font-semibold">
-  {r.creado_por ? `Creado por: ${r.creado_por}` : "Creador desconocido"}
-</p>
+
+            <p className="text-xs text-center mt-1 px-2 py-1 rounded-full inline-block bg-[#F8D9E4] text-[#B95E82] font-semibold">
+              {r.creado_por ? `Creado por: ${r.creado_por}` : "Creador desconocido"}
+            </p>
 
             <p className="text-gray-600 text-sm h-12 overflow-hidden text-center">{r.descripcion}</p>
 
             <div className="mt-4 text-sm">
-              <p><strong>Creado por:</strong> {r.creado_por}</p>
               <p><strong>Semanas sugeridas:</strong> {r.sug_semanas_em}</p>
               <p><strong>Ejercicios:</strong> {r.total_ejercicios}</p>
               <p><strong>Duración (min):</strong> {r.duracion_total_minutos}</p>
             </div>
 
             <button
-                onClick={() =>{ const slug = r.nombre.toLowerCase().replace(/ /g, "-");
-                              navigate(`/Rutina/${slug}`);
-                            }
-                      }
-              className="mt-4 w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition"
-            >
+              onClick={() => {
+                const slug = r.nombre.toLowerCase().replace(/ /g, "-");
+                navigate(`/Rutina/${slug}`);
+              }}
+              className="mt-4 w-full bg-[#F39F9F] text-white py-2 rounded-lg hover:bg-[#d57a7a] transition"
+
+>
               Ver detalles
             </button>
           </div>
         ))}
       </div>
 
+      {/* 📌 PAGINACIÓN */}
+      <div className="flex justify-center mt-8 space-x-2">
+
+        {/* PREV */}
+        <button
+          disabled={currentPage === 1}
+          onClick={() => cambiarPagina(currentPage - 1)}
+          className={`px-3 py-2 rounded-lg font-semibold ${
+            currentPage === 1
+              ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+              : "bg-[#F39F9F] text-white hover:bg-[#d57a7a]"
+          }`}
+        >
+          ←
+        </button>
+
+        {/* NÚMEROS */}
+        {[...Array(totalPaginas)].map((_, i) => (
+          <button
+            key={i}
+            onClick={() => cambiarPagina(i + 1)}
+            className={`px-4 py-2 rounded-lg font-semibold border ${
+              currentPage === i
+                ? "bg-[#F39F9F] text-white border-[#F39F9F]"
+                : "bg-white text-[#F39F9F] border-[#F39F9F] hover:bg-[#F39F9F] hover:text-white"
+            }`}
+          >
+            {i + 1}
+          </button>
+        ))}
+
+        {/* NEXT */}
+        <button
+          disabled={currentPage === totalPaginas}
+          onClick={() => cambiarPagina(currentPage + 1)}
+          className={`px-3 py-2 rounded-lg font-semibold ${
+            currentPage === totalPaginas
+              ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+              : "bg-[#F39F9F] text-white hover:bg-[#d57a7a]"
+          }`}
+        >
+          →
+        </button>
+      </div>
     </div>
   );
 }

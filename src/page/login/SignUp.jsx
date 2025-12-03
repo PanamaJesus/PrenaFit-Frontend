@@ -120,7 +120,7 @@ export default function SignUpForm() {
         ap_mat: "",
         correo: "",
         contrasena: "",
-        semana_inicial_registro: "",
+        semana_embarazo: "",
         rol: 2,
         codigo_vinculacion: "",
         estado: true,
